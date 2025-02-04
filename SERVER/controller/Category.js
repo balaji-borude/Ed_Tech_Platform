@@ -1,6 +1,6 @@
-const Tag = require("../models/tags")
+const Category  = require("../models/Category ")
 
-exports.createTag = async (req,res) => {
+exports.createCategory  = async (req,res) => {
     try {
         // fetch data
         const{name , description} =req.body;
@@ -14,20 +14,20 @@ exports.createTag = async (req,res) => {
         }; 
 
         // create Entry in Db 
-        const tagDetail = await Tag.create({
+        const categoryDetail = await Category.create({
             name:name,
             description:description
         })
-        console.log("create a Tag --> tagDetail---> ", tagDetail);
+        console.log("create a category --> categoryDetail---> ", categoryDetail);
 
         //response
         return res.status(200).json({
             success:true,
-            message:"tag created succesfully"
+            message:"category created succesfully"
         });
         
     } catch (error) {
-        console.log("error in tag creation ",error);
+        console.log("error in category creation ",error);
 
         return res.status(500).json({
             success:false,
@@ -37,15 +37,15 @@ exports.createTag = async (req,res) => {
 };
 
 // get All tags 
-exports.showAllTags = async(req,res)=>{
+exports.showAllCategory = async(req,res)=>{
     try {
         // get all tags
         // aplayla specic kahi nahi je fetch karayche ahe mhanun {} --> empty pass kela ahe andi tyapudhe jo syntax lihila to purn DB madhe Shodhto (find karto)
         // DB madhe Ji entry jyat name and description asel tr all entry gheun yee  
-        const allTags = await Tag.find({},{name:true,description:true});
+        const showAllCategory = await Category.find({},{name:true,description:true});
         res.status(200).json({
             success:true,
-            message:"Tag are created Succesfully"
+            message:"category are created Succesfully"
         })
         
     } catch (error) {

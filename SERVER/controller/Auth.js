@@ -42,7 +42,8 @@ exports.sendOTP = async(req,res)=>{
       let result = await OTP.findOne({otp:otp});
 
       // joparyant Unique otp generate hot nahi toparyant loop run  kra
-      //This is not a good  Best logic --> insted of it used library which generate a unique OTP --> this is a BrrootForces 
+      //This is not a good ,  Best logic --> insted of it used library which generate a unique OTP --> this is a BrutForce
+      
       while(result){
         otp = otpGenerator.generate(6,{
             upperCaseAlphabets:false,
