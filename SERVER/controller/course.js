@@ -166,4 +166,51 @@ exports.showAllCourses =async(req,res)=>{
 };
 
 
-// getcourseDetail 
+
+// getcourseDetail
+
+exports.getCourseDetails = async (req,res)=>{
+    try {
+        // get id 
+        const {courseId} = req.body;
+
+        // find course deatils 
+        const courseDetails = await Course.find         ({_id:courseId}).populate(
+            {
+                path:"instructor",
+                populate:{
+                    path:"additionalDetails"
+                }
+            }
+        ).populate("category")
+        .populate("ratingAndReviews")
+        .populate(
+            {
+              path:"courseContent",
+              populate:{
+                path:"subSection"
+              }  
+            }
+        ).exec();
+        // validation 
+        if(!courseDetails){
+            return res.status(400).json({
+                success:false,
+                message:`would not found the course with ${courseId}`
+            })
+        };
+
+        // success response 
+        return res.status(200).json({
+            success:true,
+            message:"course detailed Fetched Succesfully "
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+};
+
