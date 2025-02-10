@@ -19,7 +19,7 @@ try {
     if(!token){
         return res.status(401).json({
             success:false,
-            message:"Token is Missung "
+            message:"Token is Missing "
         });
     }
 
@@ -27,6 +27,7 @@ try {
     try {
         // verification
         const decode = jwt.verify(token,process.env.JWT_SECRET);
+
         console.log("VERIFYING tOKEN -- decode -->", decode);
 
 
@@ -109,7 +110,7 @@ exports.isInstructor = async(req,res,next)=>{
     } catch (error) {
         return res.status(500).json({
             success:false,
-            message:"User role cannot be verified "
+            message:"User role cannot be verified ! Please try again later  "
         })
     }
 }

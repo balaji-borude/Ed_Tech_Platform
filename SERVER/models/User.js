@@ -23,25 +23,31 @@ const UserSchema = new mongoose.Schema({
     },
     accountType:{
         type:String,
-        enum:["Admin","Instructor","Student"],
+        enum:["Admin","Instructor","Student"],   // account type is selected from this enum Only 
         required:true
     },
     additionalDetail:{
         type:mongoose.Schema.Types.ObjectId,  //is used for referencing another document in a different collection. of mongoDb 
         required:true,
-        ref:"profile"
+        ref:"Profile"  // wari ghetleli objectId hi Profile Collection chi asel 
     },
-    courses:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"course"
-    },
+
+    courses:[
+        {           // yehte apan array gheu shakto ka --> if student buy multiple courses
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Course"
+        }
+    ],
+   
+
     Image:{
         type:String,
         required:true
     },
+    
     courseProgres:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"courseProgress"
+        ref:"CourseProgress"
     }
 
 

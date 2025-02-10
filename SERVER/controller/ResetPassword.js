@@ -13,16 +13,17 @@ exports.resetPasswordToken = async (req,res) => {
      if(!user){
          return res.json({
              success:false,
-             message:"Your email is not registered with us "
+             message:`This Email :${email} is not Registered with us Enter a valid email address`
          })
      }
      // generete token 
      const token = crypto.randomUUID();
+     //   OR ELSE we can do this --> const token = crypto.randomBytes(20).toString("hex");
  
      // update user by adding and expiration time 
      const updateDetails = await User.findOneAndUpdate({email:email},{
          token : token,
-         resetPasswordExpires: Date.now()+5*60*100,
+         resetPasswordExpires: Date.now()+5*60*1000,
      },
      {new:true});
  
@@ -30,9 +31,11 @@ exports.resetPasswordToken = async (req,res) => {
      const url = `http://localhost:3000/update-password/${token}`;
  
      //send mail 
-     await mailSender(email,
+     await mailSender(
+                      email,
                      "password Reset Link",
-                      ` password reset Link --> ${url}`);
+                      ` password reset Link --> ${url} please Click this URL to reset  Password 
+                   `);
  
      // return Response 
      return res.json({
@@ -51,6 +54,7 @@ exports.resetPasswordToken = async (req,res) => {
 };
 
 
+
 // reset password
 exports.resetPassword = async(req,res)=>{
     try {
@@ -66,7 +70,7 @@ exports.resetPassword = async(req,res)=>{
         }
 
         // get user detail from DB using Token 
-        const userDetails=await User.findOneAndUpdate({token:token});
+        const userDetails=await User.findOne({token:token});
 
         //if no entry --> invalid Token
         if(!userDetails){
@@ -77,20 +81,20 @@ exports.resetPassword = async(req,res)=>{
         };
 
         //Token time check --> token is expires or not 
-        if(userDetails.resetPasswordExpires < Date.now()){
+        if(userDetails.resetPasswordExpires > Date.now()){
             return res.json({
                 success:false,
-                message:"Token is expired , regenerete Your Token "
+                message:"Token is expired , Regenerete Your Token "
             });
         };
 
         //hash password
-        let hashedPassword = await brcypt.hash(password,10);
+        let encryptedPassword = await brcypt.hash(password,10);
 
         // password la update kele 
         await User.findOneAndUpdate(
             {token:token},
-            {password:hashedPassword},
+            {password:encryptedPassword},
             {new:true}
         );
 

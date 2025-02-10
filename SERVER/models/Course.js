@@ -11,14 +11,16 @@ const courseSchema = new mongoose.Schema({
         trim:true,
         required:true
     },
-    instructor:{
+    instructor:{    // User hach Instructor , Admin and Student asu shakto na --> Tyamule instructor madhe User chi Id pass keli ahe 
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
         required:true,
     },
+
     whatYouWillLearn:{
         type:String,
     },
+    
     coursecontent:[    // course madhe multiple section yete mhanun array use kela ani Section che refference dile  
         {
         type:mongoose.Schema.Types.ObjectId,
@@ -40,7 +42,7 @@ const courseSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    Category:{
+    category:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Category"
     },

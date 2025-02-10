@@ -30,7 +30,13 @@ exports.createSection = async(req,res)=>{
                 }
             },
             {new:true}  // it return Updated document 
-        );
+        ).populate({
+            path: "courseContent",
+            populate: {
+                path: "subSection",
+            },
+        })
+        .exec();
 
         // TODO :-- use Populate to replcae section and subsection both in in the updated Course detail .----->>  H.W 
 
@@ -67,12 +73,13 @@ exports.updateSection = async(req,res)=>{
         // return res
         return res.status(200).json({
             success:true,
-            message:"Section Updated succesfully"
+            message:"Section Updated succesfully",
+            message:updateSection   // check at time of api testing is this possible 
         })
     } catch (error) {
         return res.status(500).json({
             success:false,
-            message:"Error in Section Creation "
+            message:"Error updating section "
         });
 
     }
@@ -83,7 +90,7 @@ exports.deleteSection = async(req,res)=>{
     try {
         //get ID --> assuming that we are sending ID in params
 
-        const{sectionId} = req.params;
+        const {sectionId} = req.params;
         // TODO:--> do we need to delete the entry from the course schema -->  he aplyla testing chya weles sanjel 
         //delete section 
         const deletedSection = await Section.findByIdAndDelete(sectionId);
@@ -95,6 +102,8 @@ exports.deleteSection = async(req,res)=>{
         })
 
     } catch (error) {
+        console.log("Error deleting Section ", error);
+        
         return res.status(500).json({
             success:false,
             message:"Error in Section Creation "
