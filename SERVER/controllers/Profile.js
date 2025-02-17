@@ -1,27 +1,34 @@
 const Profile = require("../models/Profile");
 const User = require("../models/User");
+const { uploadImageToCloudinary } = require("../utils/imageUploader");
+require("dotenv").config();
 
-
-exports.Profile = async(req,res) =>{
+//update profile picture
+exports.updateProfile = async(req,res) =>{
     try {
        // data fetch from body  --> data nahi takla tr default empty send kela 
        const{gender,dateOfBirth="",about = "",contactNumber} = req.body;
        
        // get user Id --> token madhe User id send keleli ahe tyatun baher kadhli 
-       const id = req.user.Id;
+       const id = req.user.id;
+       console.log("Printing Id in Profile-->",id)
 
        // validation 
-        if( !gender || !dateOfBirth || !about || contactNumber){
+        if( !gender || !dateOfBirth || !about || !contactNumber){
             return res.status(400).json({
                 success:false,
                 message:"Please fill all the deatils "
             })
-        }
-       // apan profile banavleli ahe tyamule 
-       // profile la find kera
-       const userDetail = await Profile.findById( );
+        };
+   
+       /* User madhe Additionall detail navachi field add keleli ahe tila -->  Profile  ase nav dile , aplyala User model madhun Tya Profile(additionaldetails) field(model) chi Id find karaychi ani tya Id wr aplya req.body madhun ghetlela data update karaycha ahe */  
+
+       const userDetail = await User.findById(id);
+       console.log("Userdetail find keli -->", userDetail)
 
         const profileId = userDetail.additionalDetail; // profile chi Id find keli ahe 
+        console.log("user madun Profile chi Id kadli -->",profileId);
+
         const profileDetails = await Profile.findById(profileId);
 
        //update profile
@@ -97,17 +104,28 @@ exports.deleteAccount = async(req,res)=>{
     }
 };
 
-
 //AAdditional 
-
 // get user detail 
 exports.getAllUserDetails = async(req,res)=>{
+
     try {
-        // get id 
-        const id = req.body.id;
+    
+        // get id --> Hi id login kartanna token madhe takli hoti --> ani te token user madhe send kela hota 
+        const id = req.user.id; 
+        console.log("Printing Get all detail id -->", id)
 
         // validation and get user detail 
-        const userDetails = await User.findById(id).populate("additionalDetails").exec();
+        const userDetails = await User.findById(id);
+        await userDetails.populate('additionalDetails').execPopulate();
+    
+        console.log("userDeils printing-->", userDetails);
+
+        if(!userDetails){
+          return res.status(400).json({
+            success:false,
+            message:"Data not found on this id "
+          })
+        }
 
         // aplyala userDetail madhe sarv detail nahi bhetaych i jase ki gender,dateOfBirtt, about , phone number --> ya  field sathi additional deatal nava che ek field ahe User model chya model madhe tyla Populate keaya and Query .execu() method use karun execute krt ahe 
 
@@ -124,4 +142,63 @@ exports.getAllUserDetails = async(req,res)=>{
             message:"something went wrong while fetching All user data "
         })
     }
-}
+};
+
+exports.updateDisplayPicture = async (req, res) => {
+    try {
+      console.log("entering the profile update section")
+      const displayPicture = req.files.displayPicture;
+       
+      const userId = req.user.id;
+      console.log("userd id ", userId);
+      
+      const image = await uploadImageToCloudinary(
+        displayPicture,
+        process.env.FOLDER_NAME,
+        1000,
+        1000
+      )
+      console.log(image)
+      const updatedProfile = await User.findByIdAndUpdate(
+        { _id: userId },
+        { image: image.secure_url },
+        { new: true }
+      )
+      res.send({
+        success: true,
+        message: `Image Updated successfully`,
+        data: updatedProfile,
+      })
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      })
+    }
+};
+  
+exports.getEnrolledCourses = async (req, res) => {
+    try {
+      const userId = req.user.id
+      const userDetails = await User.findOne({
+        _id: userId,
+      })
+        .populate("courses")
+        .exec()
+      if (!userDetails) {
+        return res.status(400).json({
+          success: false,
+          message: `Could not find user with id: ${userDetails}`,
+        })
+      }
+      return res.status(200).json({
+        success: true,
+        data: userDetails.courses,
+      })
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      })
+    }
+};

@@ -25,10 +25,17 @@ const UserSchema = new mongoose.Schema({
         type:String,
         enum:["Admin","Instructor","Student"],   // account type is selected from this enum Only 
         required:true
+    },	
+    active: {
+        type: Boolean,
+        default: true,
     },
-    additionalDetail:{
-        type:mongoose.Schema.Types.ObjectId,  //is used for referencing another document in a different collection. of mongoDb 
-        required:true,
+    approved: {
+        type: Boolean,
+        default: true,
+    },
+    additionalDetails:{
+        type: mongoose.Schema.Types.ObjectId,  //is used for referencing another document in a different collection. of mongoDb 
         ref:"Profile"  // wari ghetleli objectId hi Profile Collection chi asel 
     },
 
@@ -38,9 +45,14 @@ const UserSchema = new mongoose.Schema({
             ref:"Course"
         }
     ],
-   
-
-    Image:{
+    token: {
+        type: String,
+    },
+    resetPasswordExpires: {
+        type: Date,
+    },
+    
+    image:{
         type:String,
         required:true
     },

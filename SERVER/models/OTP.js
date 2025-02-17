@@ -1,5 +1,6 @@
 const mongoose= require("mongoose");
 const mailSender = require("../utils/mailSender");
+const emailTemplate = require("../mail/templates/emailVerificationTemplate");
 
 const OTPSchema = new mongoose.Schema({
   email:{
@@ -13,15 +14,16 @@ const OTPSchema = new mongoose.Schema({
   createdAt:{
     type:Date,
     default:Date.now(),
-    expires:5*60                   // OTP ----> expire in 5 min --> it Temporary is stored in DB 
+    expires: 60*5               // OTP ----> expire in 5 min --> it Temporary is stored in DB --> 5*60  300 || 
   }
-})
+});
+
 
 // sending mail section here
 async function sendVerificationEmail(email,otp){
     try {
         //mail cha response 
-        const mailResponse = await mailSender(email,"Verification Email From study Notion", otp);
+        const mailResponse = await mailSender(email,"Verification Email From study Notion",emailTemplate(otp) );
         console.log("Email send succesfully" , mailResponse);
 
         
@@ -36,7 +38,7 @@ async function sendVerificationEmail(email,otp){
 // pre-save middleware function is used 
 OTPSchema.pre("save",async function(next){
     await sendVerificationEmail(this.email,this.otp);
-    next;  // go to the next middleware 
+    next();  // go to the next middleware 
 })
 
 module.exports = mongoose.model("OTP",OTPSchema)

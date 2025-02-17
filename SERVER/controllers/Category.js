@@ -4,7 +4,7 @@ const Category  = require("../models/Category")
 exports.createCategory  = async (req,res) => {
     try {
         // fetch data
-        const{name , description} =req.body;
+        const{name, description} =req.body;
 
         // validation
         if(!name || !description){
@@ -38,7 +38,7 @@ exports.createCategory  = async (req,res) => {
 };
 
 // get All Category 
-exports.showAllCategory = async(req,res)=>{
+exports.showAllCategories = async(req,res)=>{
     try {
         // get all tags
         // aplya kade specific kahi nahi je fetch karayche ahe mhanun {} --> empty pass kela ahe andi tyapudhe jo syntax lihila to purn DB madhe Shodhto (find karto)
@@ -53,7 +53,8 @@ exports.showAllCategory = async(req,res)=>{
                                                 );
         res.status(200).json({
             success:true,
-            message:"category are created Succesfully"
+            message:"Succesfully all category is shown below -->  ",
+            showAllCategory
         })
         
     } catch (error) {

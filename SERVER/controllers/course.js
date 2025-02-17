@@ -11,23 +11,25 @@ exports.createCourse = async(req,res)=>{
     try {
 
         // get user Id from request object 
-        const id = req.user.id;
+         const userId = req.user.id;  // instructor chi detail kadhli
 
         // get all required field from request body 
-        const {courseName,
-            courseDescription,
-            whatYouWillLearn,
-            price,
-            category,
-            status,
-            instructions,
-        } =  req.body;
+        let {
+			courseName,
+			courseDescription,
+			whatYouWillLearn,
+			price,
+			tag,
+			category,
+			status,
+			instructions,
+		} = req.body;
 
         // Get thumbnail image from request files
         const thumbnail = req.files.thumbnailImage; 
 
         // validation 
-        if(!courseName|| !courseDescription || !whatYouWillLearn || !price || !category || !status || !instructions ){
+        if(!courseName|| !courseDescription || !whatYouWillLearn || !price || !tag || !category || !status || !instructions ){
             return res.status(400).json({
                 success:false,
                 message:"All field are required"
@@ -41,7 +43,7 @@ exports.createCourse = async(req,res)=>{
         // course is only created only by Instructor (instructor validation);
         //  --> intructor chi object_id pahije na course madhe mhanun -->
 
-        const userId = req.user.id;  // instructor chi detail kadhli
+   
 
         // Check if the user is an instructor
         const instructorDetails = await User.findById(userId,
@@ -59,16 +61,10 @@ exports.createCourse = async(req,res)=>{
             })
         };
         // tag validation  --> tag jr input madhe ala to check karaycha --> postmon sati jr drop-down menu use kela asel tr correct yeil 
-        const categoryDetail = await Category.findById(category);
-        if(!categoryDetail){
-            return res.status(404).json({
-                success:false,
-                message:"Instructor detail is Not found"
-            })
-        };
-
+ 
         // Check if the tag given is valid
 		const categoryDetails = await Category.findById(category);
+
 		if (!categoryDetails) {
 			return res.status(404).json({
 				success: false,
@@ -78,6 +74,7 @@ exports.createCourse = async(req,res)=>{
 
         // thumbanail image send to cloudinary 
         const thumbnailImage = await uploadImageToCloudinary(thumbnail,process.env.FOLDER_NAME); 
+
         // create cousrse entry in DB for new course
         const newCourse = await Course.create({
             courseName,
@@ -85,11 +82,14 @@ exports.createCourse = async(req,res)=>{
             instructor:instructorDetails._id, // instructor chya ID sathi wari DB call kela ahe 
             whatYouWillLearn:whatYouWillLearn,
             price,
-            tag:tagDetail._id,  // apan yete fakt tag hi pathvu shakto karan tyat pn id ahe Tag chi
+            category: categoryDetails._id,  // apan yete fakt tag hi pathvu shakto karan tyat pn id ahe Tag chi
             thumbnail:thumbnailImage.secure_url,
             status: status,
 			instructions: instructions,
         });
+
+        console.log("New Course create succesfully -->",newCourse);
+
 
         // add the new couse to the user schema of instrutor 
         // user chi ji course list ahe tyat ha couse taknyasathi --> he kelay --> user ha instructor ahe   
@@ -106,7 +106,7 @@ exports.createCourse = async(req,res)=>{
 
         // update the tag schema 
         await Category.findByIdAndUpdate(
-            categoryDetail._id,
+            categoryDetails._id,
             { 
                 $push: { courses: newCourse._id } }, // Add course ID to the tag
             { new: true }
@@ -130,7 +130,7 @@ exports.createCourse = async(req,res)=>{
 
 
 // get all courses 
-exports.showAllCourses =async(req,res)=>{
+exports.getAllCourses =async(req,res)=>{
     try {
         
         // find all courses 
@@ -164,8 +164,6 @@ exports.showAllCourses =async(req,res)=>{
         }) 
     }
 };
-
-
 
 // getcourseDetail
 

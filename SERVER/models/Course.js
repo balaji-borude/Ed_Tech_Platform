@@ -1,7 +1,7 @@
 const mongoose= require("mongoose");
 
 const courseSchema = new mongoose.Schema({
-    name:{
+    courseName:{
         type:String,
         trim:true,
         required:true
@@ -21,7 +21,7 @@ const courseSchema = new mongoose.Schema({
         type:String,
     },
     
-    coursecontent:[    // course madhe multiple section yete mhanun array use kela ani Section che refference dile  
+    courseContent:[    // course madhe multiple section yete mhanun array use kela ani Section che refference dile  
         {
         type:mongoose.Schema.Types.ObjectId,
         ref:"Section"
@@ -62,6 +62,7 @@ const courseSchema = new mongoose.Schema({
     status: {
 		type: String,
 		enum: ["Draft", "Published"],
+        default:["Draft"]
 	},
 });
 

@@ -1,14 +1,225 @@
-
 const User = require("../models/User");
 const OTP = require("../models/OTP");
 const Profile =  require("../models/Profile");
 const mailSender = require("../utils/mailSender"); //this function is called to send mail if password is changed 
 const { passwordUpdated } = require("../mail/templates/passwordUpdate");
+const bcrypt = require('bcrypt');
 
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const otpGenerator = require("otp-generator");  // it is  a library 
+const otpGenerator = require("otp-generator");  // it is  a library
 require("dotenv").config();
+
+
+// signup  handler
+exports.signUp= async(req,res)=>{
+    try {
+        // Destructure fields from the request body    
+        const {firstName,
+            lastName,
+            email,
+            password,
+            confirmPassword,
+            accountType, 
+            contactNumber,
+            otp} = req.body;
+
+        // validation of above password 
+        if(!firstName || !lastName || !email || !password || !confirmPassword || !otp){
+            return res.status(403).json({
+                success:false,
+                message:"All Field are Required"
+            })
+        };
+
+        // check if password and confirm password is matching or not 
+        if(password !== confirmPassword){
+           return res.status(400).json({
+                success:false,
+                message:"Password and ConfirmPassword Field does not matched "
+            });
+        };
+
+        // check email is already present or not 
+        const existing_user = await User.findOne({email});
+
+        if(existing_user){
+           return res.status(400).json({
+                success:false,
+                message:'User is already Registered , Please LoggedIN '
+            })
+        };
+
+        // find most resent OTP stored in user --> means DB  
+        const response = await OTP.find({ email }).sort({ createdAt: -1 });  // findOne()--> method gives an error
+
+        if (!response) {
+            return res.status(400).json({
+                success: false,
+                message: "No OTP found for this email"
+            });
+        }
+        // .sort({createdAt : -1}).limit(1);
+        //1.Finds the first document where the email field matches the given value.
+        //2. sort({createdAt : -1}) -->  Sorts the results in descending order (newest first) based on the createdAt field.
+        //3. .limit(1)--> Ensures that only one document (the most recent one) is returned.
+
+        console.log("recent OTP in DB _----> ", response);
+
+        // validate Otp 
+        if (response.length === 0) {
+			// OTP not found for the email
+			return res.status(400).json({
+				success: false,
+				message: "The OTP is not valid fOr Length",
+			});
+		} else if (otp !== response[0].otp) {
+			// Invalid OTP
+			return res.status(400).json({
+				success: false,
+				message: "The OTP is not valid  res",
+			});
+		}
+
+        // Hash the Password 
+        let hasshedPassword = await bcrypt.hash(password,10);
+        console.log("Password is hashed now ",hasshedPassword);
+
+        // Create the User 
+        let approved ="";
+        accountType === "Instructor" ? (approved=false):(approved=true);
+
+        // dB Madhe Entry Create karne ahe 
+        // profile detail la pahile Db madhe entry creat keli --> karan aple additional detail chi _ID --> pass karaychi ahe na signup madhe 
+        
+        // Create the Additional Profile For User
+        const profileDetails = await Profile.create({
+            gender:null,
+            dateOfBirth: null,
+            about:null,
+            contactNumber:null
+        });
+
+        const user = await User.create({
+            firstName,
+            lastName,
+            email,
+            contactNumber,
+            password:hasshedPassword,
+            accountType,
+            approved:approved,
+            additionalDetail:profileDetails._id,  
+           // additionalDetail :profileDetails._id, // yamdhe je profile detail ahe na tyachi id pass keli je profile Detail page 
+           image:`https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${ lastName}`,
+        });
+
+        console.log("This Entry is Stored in DataBase",user);
+
+        // response succes send krar a
+        return res.status(200).json({
+            success:true,
+            message:"User is Registered Succesfully",
+            user
+        });
+
+
+    } catch (error) {
+
+     res.status(500).json({
+        success:false,
+        message:"something went Wrong in SignUP !!  User cannot be Registerred , please try again ",
+        error: error
+     })
+    }
+};
+
+// login handler
+exports.login= async(req,res)=>{    
+    try {
+        // get email and Password from req.body 
+        const {email,password} = req.body;
+         
+        // check if email and password is missing or not 
+        if(!email || !password){
+            // if missisng -->  Return 400 Bad Request status code with error message
+            return res.status(400).json({
+                success:false,
+                message:"Please Fill the all field"
+            })
+        };
+
+        // check kr email present ahe ka Db Madhe --> object Id chya Aivaji purn document retrive karnysathi populate usekartat 
+
+        //Find user with provided email 
+        const user = await User.findOne({email}).populate("additionalDetails");
+
+        //The .populate("additionalDetails") method in Mongoose is used to replace an ObjectId reference with the actual document from another collection.
+        // If User is not found with provided email
+        if (!user) {
+            // ERROR 2: Missing return statement causing headers to be sent twice
+            return res.status(401).json({
+                success: false,
+                message: "User not registered. Please sign up."
+            });
+        }
+        
+        // Compare Password  and Generate JWT  token 
+        if(await bcrypt.compare(password, user.password)){
+            // jr password match zale tr TOKEN create karayche
+             // create Jwt Token 
+            payload={
+                id:user._id,
+                email:user.email,
+                accountType:user.accountType
+                //password:user.password --> do not send password in token   
+            };
+            // jwt secret call kela
+            let JWT_SCERET = process.env.JWT_SCERET;
+            // option madhe Expirey set karaychi 
+            options={
+                expiresIn:"24h"
+            };
+
+            // create token 
+            const token =  jwt.sign(payload,JWT_SCERET,options);
+            console.log("After LOgin Token is created---> ", token )
+
+            // token la user madhe INSERT kele 
+            // save token to user document in database
+            //*******************impp********************************** */
+
+            //const user = user.toObject();   // explicitly to object madhe convert karave lagte 
+            user.token = token;              // const plain_user = user.toObject();
+            user.password = undefined;
+
+            // Set cookie for token and return success response
+            // generate cookie
+            cookie_options = {
+             expires:  new Date(Date.now()+ 3*24*60*60*1000), // cookie Expires in 3 day --> 3*24*60*60*1000
+             httpOnly:true  // Prevents JavaScript from accessing the cookie (enhances security).
+            };
+
+            res.cookie("token",token,cookie_options).status(200).json({
+                success:true,
+                message:"User Loggged In Succesfully ",
+                token,  // token pass kele 
+                user   // DB madhun user cha data kadhla hota  to user tyat apan token add kelela ahe 
+            });
+
+        }else{
+            return res.status(401).json({
+                success:true,
+                message:"passsword is Incorrect "
+            })
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Login failure !! Please Try again later"
+        })
+    } 
+};
 
 // OTP handler --> 
 exports.sendOTP = async(req,res)=>{
@@ -61,7 +272,8 @@ exports.sendOTP = async(req,res)=>{
 
       res.status(200).json({
         success:true,
-        message:"OTP send Succesfully"
+        message:"OTP send Succesfully",
+        otp:otpBody.otp
       })
 
    } catch (error) {
@@ -74,193 +286,6 @@ exports.sendOTP = async(req,res)=>{
    }
 };
  
-// signup  handler
-exports.signUp= async(req,res)=>{
-    try {
-        // data fetch from req.body    
-        const {firstName,lastName,email,password,
-            confirmPassword, accountType, contactNumber,otp} = req.body;
-
-        // validation of above password 
-        if(!firstName || !lastName || !email || !password || !confirmPassword || !otp){
-            return res.status(403).json({
-                success:false,
-                message:"All Field are Required"
-            })
-        };
-
-        // check if password and confirm password is matching or not 
-        if(password !== confirmPassword){
-            res.status(400).json({
-                success:false,
-                message:"Password and ConfirmPassword Field does not matched "
-            });
-        };
-
-        // check email is already present or not 
-        const existing_user = await User.findOne({email});
-
-        if(existing_user){
-           return res.status(400).json({
-                success:false,
-                message:'User is already Registered , Please LoggedIN '
-            })
-        };
-
-        // find most resent OTP stored in user --> means DB  
-        const recentOtp = await OTP.find({email}).sort({createdAt : -1}).limit(1);
-        //1.Finds the first document where the email field matches the given value.
-        //2. sort({createdAt : -1}) -->  Sorts the results in descending order (newest first) based on the createdAt field.
-        //3. .limit(1)--> Ensures that only one document (the most recent one) is returned.
-
-        // validate Otp 
-        if(recentOtp.length == 0){
-            // otp not found
-            return res.status(400).json({
-                success:false,
-                message:"The OTP is not valid "
-            })
-        }else if(otp !== recentOtp[0].otp){
-            //jr DB madhun alela OTP and req.body madhun alela OTP jr match nahi kela tr --> Invlaid OTP mhanun  print kr 
-            // if OTP is Invalid 
-            return res.status(400).json({
-                success:false,
-                message:"The OTP is not valid "
-            })
-        };
-
-        // Hash the Password 
-        let hasshedPassword = await bcrypt.hash(password,10);
-        console.log("Password is hashed",hasshedPassword);
-
-        // Create the User 
-        let approved ="";
-        approved ==="Instructor" ? (approved=false):(approved=true);
-
-        // dB Madhe Entry Create karne ahe 
-        // profile detail la pahile Db madhe entry creat keli --> karan apl additional detail chi _ID --> pass karaychi ahe na signup madhe 
-        
-        // Create the Additional Profile For User
-        const profileDetails = await Profile.create({
-            gender:null,
-            dateOfBirth: null,
-            about:null,
-            contactNumber:null
-        });
-
-        const entryData = await User.create({
-            firstName,
-            lastName,
-            email,
-            contactNumber,
-            password:hasshedPassword,
-            accountType,
-            approved:approved,
-            additionalDetail :profileDetails._id, // yamdhe je profile detail ahe na tyachi id pass keli je profile Detail page 
-             image:`https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`
-        });
-
-        console.log("This Entry is Stored in DataBase",entryData);
-
-        // response succes send krar a
-        return res.status(200).json({
-            success:true,
-            message:"User is Registered Succesfully",
-            entryData
-        })
-    } catch (error) {
-     res.status(500).json({
-        success:false,
-        message:"something went Wrong in SignUP !!  User cannot be Registerred , please try again "
-     })
-    }
-};
-
-// login handler
-exports.login= async()=>{
-    try {
-        // get email and Password from req.body 
-        const {email,password} = req.body;
-         
-        // check if email and password is missing or not 
-        if(!email || !password){
-            // if missisng -->  Return 400 Bad Request status code with error message
-            res.send(403).json({
-                success:false,
-                message:"Please Fill the all field"
-            })
-        };
-
-        // check kr email present ahe ka Db Madhe --> object Id chya Aivaji purn document retrive karnysathi populate usekartat 
-
-        //Find user with provided email 
-        const user = await User.findOne({email}).populate("additionalDetails");
-
-        //The .populate("additionalDetails") method in Mongoose is used to replace an ObjectId reference with the actual document from another collection.
-        // If User is not found with provided email
-        if(!user){
-            res.status(401).json({
-                success:false,
-                message:"User not Registered with us Please SignUp to continue"
-            });
-        };
-        
-        // Generate JWT token and Compare Password 
-        if(await bcrypt.compare(password, user.password)){
-            // jr password match zale tr TOKEN create karayche
-             // create Jwt Token 
-            payload={
-                id:user._id,
-                email:user.email,
-                accountType:user.accountType
-                //password:user.password --> do not send password in token   
-            };
-            // jwt secret call kela
-            let JWT_SCERET = process.env.JWT_SCERET;
-            // option madhe Expirey set karaychi 
-            options={
-                expiresIn:"2hr"
-            };
-
-            // create token 
-            const token =  jwt.sign(payload,JWT_SCERET,options);
-            console.log("Printing Token --> ", token);
-
-            // token la user madhe INSERT kele 
-            // save token to user document in database
-            user.token = token;
-            user.password = undefined;
-
-            // Set cookie for token and return success response
-            // generate cookie
-            cookie_options = {
-             expires:  new Date(Date.now()+ 3*24*60*60*1000), // cookie Expires in 3 day 
-             httpOnly:true
-            };
-
-            res.cookie("cookie",token,cookie_options).status(200).json({
-                success:true,
-                message:"User Loggged In Succesfully ",
-                token,
-                user   // DB madhun user cha data kadhla hota 
-            });
-
-        }else{
-            return res.status(401).json({
-                success:true,
-                message:"passsword is Incorrect "
-            })
-        }
-
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            success:false,
-            message:"Login failure !! !  Pease Try again later"
-        })
-    } 
-};
-
 //Cotroller For change Password --> H.W
 exports.changePassword = async (req,res)=>{
 
@@ -343,8 +368,6 @@ exports.changePassword = async (req,res)=>{
                 });
             }
     
-     
-
         // return success resonse
          return res.status(200).json({
             success:true,

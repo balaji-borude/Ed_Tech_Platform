@@ -8,6 +8,8 @@ exports.createSection = async(req,res)=>{
         // get data from req. body 
         const{sectionName,courseId} = req.body;
 
+        console.log("createSection controller--> courseId =", courseId)
+
         // validate data 
         if(!sectionName || !courseId){
             return res.status(400).json({
@@ -19,24 +21,29 @@ exports.createSection = async(req,res)=>{
         // create section 
         const newSection = await Section.create({sectionName});  // yete DB madhe New Secction create kele 
 
+        //console.log("print newSection" ,newSection)
+
         // Update course with section ObjectId 
               // course chya sechma madhe new Section create kela tyachi id passs karaychi ahe 
-        const updatedCoursedetail = await Course.findByIdAndUpdate(
-            courseId, // find ya id ne hoil 
-            {
-                // course schema madhe --coursecontent ya navachi field ahe tyat add keli section chi ID 
-                $push:{
-                    coursecontent:newSection._id
-                }
-            },
-            {new:true}  // it return Updated document 
-        ).populate({
-            path: "courseContent",
-            populate: {
-                path: "subSection",
-            },
-        })
-        .exec();
+              console.log("updatedCoursedetail -<->");
+
+		const updatedCourse = await Course.findByIdAndUpdate(
+			courseId,
+			{
+				$push: {
+					courseContent: newSection._id,
+				},
+			},
+			{ new: true }
+		)
+			.populate({
+				path: "courseContent",
+				populate: {
+					path: "subSection",
+				},
+			})
+			.exec();
+        console.log("updatedCoursedetail Db interaction -->",updatedCourse)
 
         // TODO :-- use Populate to replcae section and subsection both in in the updated Course detail .----->>  H.W 
 

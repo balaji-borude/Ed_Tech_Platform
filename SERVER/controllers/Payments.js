@@ -1,7 +1,7 @@
 
 
 // razorpay cha instace ghetla 
-const{instace}= require("../config/razorpay");
+const{instance}= require("../config/razorpay");
 const Course = require("../models/Course");
 const mongoose = require("mongoose");// user_id string madhun --> object ID madhe convert karayche ahe tyamule moongose cha instance aplyala pahije 
 
@@ -9,8 +9,8 @@ const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
 
 // import karayche baki ahe 
-const {CourseEnrollmentEmail} = require("../mail");
-const { default: mongoose } = require("mongoose");
+const {CourseEnrollmentEmail} = require("../mail/templates/courseEnrollmentEmail");
+//const { default: mongoose } = require("mongoose");
 
 // capture payment and initiate the razorpay 
 exports.capturePayment = async(req , res) =>{

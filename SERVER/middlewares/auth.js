@@ -1,55 +1,54 @@
 
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 require("dotenv").config();
 
-const User = require("../models/User");
-
-
 // authentication middleware
-exports.auth = async(req,res,next)=>{
-// ordering of middleware is place in routes folder 
+exports.auth = async (req, res, next) => {
+    try{
+        console.log("Entering in Auth middleware")
+        //extract token
+        const token = req.cookies.token
+            || req.body.token 
+            || req.header("Authorization").replace("Bearer ", "");
 
-try {
-    //we have to check authentication
-    //we have to verify token 
-    //extract token 
-    const token = req.cookies.token || req.body.token ||  req.header("Authorization").replace("Bearer ","");
+        console.log("Printing Token From Auth --> ", token);
 
-    // if token is missing
-    if(!token){
+        //if token missing, then return response
+        if(!token) {
+            return res.status(401).json({
+                success:false,
+                message:'TOken is missing',
+            });
+        }
+
+        //verify the token
+        const JWT_SCERET = process.env.JWT_SCERET;
+        console.log("Printing jwtSecret in auth -->",JWT_SCERET);
+
+        try{
+            const decode =  jwt.verify(token, JWT_SCERET);
+
+            console.log()
+            console.log(decode);
+            req.user = decode;    // user chya requestmadhe Token pathavle 
+        }
+        catch(err) {
+            //verification - issue
+            return res.status(401).json({
+                success:false,
+                message:'token is invalid',
+            });
+        }
+        next();
+
+    }
+    catch(error) {  
         return res.status(401).json({
             success:false,
-            message:"Token is Missing "
+            message:'Something went wrong while validating the token',
         });
     }
-
-    // verify token 
-    try {
-        // verification
-        const decode = jwt.verify(token,process.env.JWT_SECRET);
-
-        console.log("VERIFYING tOKEN -- decode -->", decode);
-
-
-        // request madhe token pass karayche mhaje pratyek weles LOgin karaychi garaj nahi padnar 
-        // request madhe token la decode kelela data pathavla ahe 
-        req.user = decode;
-
-    } catch (error) {
-        return res.status(401).json({
-            success:false,
-            message:"Token is Invalid "
-        })
-    };
-
-    next();
-
-} catch (error) {
-    return res.status(401).json({
-        success:false,
-        message:"Something went wrong while validating the "
-    })
-}
 }
 
 //isStudent 
@@ -97,6 +96,7 @@ exports.isAdmin = async(req,res,next)=>{
 // inInstructor
 exports.isInstructor = async(req,res,next)=>{
     try {
+        console.log("Entering in Is Instructor section ")
         // fetching role from request and checking the role is student  
         if(req.user.accountType !== "Instructor"){
             return res.status(401).json({
@@ -104,7 +104,7 @@ exports.isInstructor = async(req,res,next)=>{
                 message:"This is a Protected Route for Instructor"
             })
         }
-
+        console.log("existing in Is Instructor section ")
         next();  // go to next middleware
 
     } catch (error) {

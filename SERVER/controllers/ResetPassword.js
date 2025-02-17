@@ -1,7 +1,9 @@
 const User = require("../models/User");
-
+const bcrypt = require('bcrypt');
 const mailSender = require("../utils/mailSender");
+const crypto = require("crypto");
 
+// reset-password-token
 exports.resetPasswordToken = async (req,res) => {
    try {
      // get email from req body 
@@ -53,16 +55,14 @@ exports.resetPasswordToken = async (req,res) => {
    }
 };
 
-
-
 // reset password
 exports.resetPassword = async(req,res)=>{
     try {
         // data fetch 
-        const{password,resetPassword,token } = req.body;
+        const{password,confirmPassword,token } = req.body;
 
         //validation
-        if(password !== resetPassword){
+        if(password !== confirmPassword){
             return res.json({
                 success:false,
                 message:"Password is not matching"
@@ -89,7 +89,7 @@ exports.resetPassword = async(req,res)=>{
         };
 
         //hash password
-        let encryptedPassword = await brcypt.hash(password,10);
+        let encryptedPassword = await bcrypt.hash(password,10);
 
         // password la update kele 
         await User.findOneAndUpdate(
@@ -107,11 +107,12 @@ exports.resetPassword = async(req,res)=>{
 
     } catch (error) {
         console.log("error in Reset- password",error); 
+        
     return res.status(500).json({
         success:false,
         message:"something went Wrong While reset password "
     })
     
     }
-}
+};
 
