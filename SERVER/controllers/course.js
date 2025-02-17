@@ -173,7 +173,7 @@ exports.getCourseDetails = async (req,res)=>{
         const {courseId} = req.body;
 
         // find course deatils 
-        const courseDetails = await Course.find         ({_id:courseId}).populate(
+        const courseDetails = await Course.find({_id:courseId}).populate(
             {
                 path:"instructor",
                 populate:{
@@ -201,7 +201,8 @@ exports.getCourseDetails = async (req,res)=>{
         // success response 
         return res.status(200).json({
             success:true,
-            message:"course detailed Fetched Succesfully "
+            message:"course detailed Fetched Succesfully ",
+            courseDetails
         })
     } catch (error) {
         console.log(error);
