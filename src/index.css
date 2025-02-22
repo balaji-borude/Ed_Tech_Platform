@@ -5,4 +5,8 @@
 
 html,body{
     overflow-x: hidden;
+};
+
+.homePage-bg {
+    background-image: url("/src/assets/Images/bghome.svg"); /* Not recommended for production */
 }
