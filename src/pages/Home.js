@@ -10,7 +10,11 @@ import bgImage from "../assets/Images/bghome.svg";
 import LearningLanguageSection from "../components/core/HomePage/LearningLanguageSection";
 import TimeLineSection from "../components/core/HomePage/TimeLineSection"
 import InstructorSection from '../components/core/HomePage/InstructorSection';
-import ExploreMore from '../components/core/HomePage/ExploreMore'
+import ExploreMore from '../components/core/HomePage/ExploreMore';
+import Footer from '../components/UI/Footer'
+
+
+
 const Home = () => {
   return (
     <div >
@@ -163,9 +167,9 @@ const Home = () => {
       </div>
 
         {/* ExploreMore section  */}
-        <div>
+        
         <ExploreMore/>
-        </div>
+      
         
       {/*Section 2  */}
       <div className='bg-pure-greys-5 text-richblack-700'>

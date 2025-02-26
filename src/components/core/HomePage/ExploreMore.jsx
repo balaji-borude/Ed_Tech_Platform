@@ -1,95 +1,80 @@
-import React from 'react'
-import {useState} from 'react';
-import { HomePageExplore } from '../../../data/homepage-explore';
-//import Home from '../../../pages/Home';
-import HighLightText from './HighLightText';
-import CourseCard from './CourseCard';
+import React, { useState } from "react";
+import { HomePageExplore } from "../../../data/homepage-explore";
+import CourseCard from "./CourseCard";
+import HighLightText from "./HighLightText";
 
-const tabName=[
-    "Free",
-    "New to Coding",
-    "Most Popular",
-    "Skills Path",
-    "Career Paths"
+const tabsName = [
+  "Free",
+  "New to coding",
+  "Most popular",
+  "Skills paths",
+  "Career paths",
 ];
 
-
 const ExploreMore = () => {
-    // by default case madhe HomePageExplore && tabName cha first index cha data  mhanun -->useState(tabName[0]) ase ghetlee ahe 
+  const [currentTab, setCurrentTab] = useState(tabsName[0]);
+  const [courses, setCourses] = useState(HomePageExplore[0].courses);
+  const [currentCard, setCurrentCard] = useState(
+    HomePageExplore[0].courses[0].heading
+  );
 
-    const [currentTab, setCurrentTab] = useState(tabName[0]);
-    const [course, setCourse] = useState(HomePageExplore[0].courses);
-
-    //console.log("printing Courses ",HomePageExplore[0].courses)
-
-    // UI madhe first card white madhe ahe na mhabub yehte  ek navin useState ghetla -->  jya card wr click kele tya card cha color change hoto tyamul he sate variable use kele ahe 
-    const[currentCard, setCurrentCard] = useState(HomePageExplore[0].courses[0].heading);
-
-    const setMyCards = (value)=>{
-        setCurrentTab(value); // current tab chi value change krt ahe 
-        const result = HomePageExplore.filter((course)=>course.tag === value);
-        console.log("result of explore more page ", result)
-        setCourse(result[0].courses);
-        setCurrentCard(result[0].courses[0].heading);
-
-    }
-
+  const setMyCards = (value) => {
+    setCurrentTab(value);
+    const result = HomePageExplore.filter((course) => course.tag === value);
+    setCourses(result[0].courses);
+    setCurrentCard(result[0].courses[0].heading);
+  };
 
   return (
-
     <div>
-
-        <div className='text-4xl font-semibold text-center text-white'>
-            Unlock the 
-            <HighLightText text={"Power of code"} />
+      {/* Explore more section */}
+      <div>
+        <div className="text-4xl font-semibold text-center my-10 text-white">
+          Unlock the
+          <HighLightText text={"Power of Code"} />
+          <p className="text-center text-richblack-300 text-lg font-semibold mt-1">
+            Learn to Build Anything You Can Imagine
+          </p>
         </div>
+      </div>
 
-        <p className='text-center text-richblack-300 text-[16px] font-semibold mt-3 '>
-            Learn To anything you can Imagine
-        </p>
+      {/* Tabs Section */}
+      <div className="hidden lg:flex gap-5 -mt-5 mx-auto w-max bg-richblack-800 text-richblack-200 p-1 rounded-full font-medium drop-shadow-[0_1.5px_rgba(255,255,255,0.25)]">
+        {tabsName.map((ele, index) => {
+          return (
+            <div
+              className={` text-[16px] flex flex-row items-center gap-2 ${
+                currentTab === ele
+                  ? "bg-richblack-900 text-richblack-5 font-medium"
+                  : "text-richblack-200"
+              } px-7 py-[7px] rounded-full transition-all duration-200 cursor-pointer hover:bg-richblack-900 hover:text-richblack-5`}
+              key={index}
+              onClick={() => setMyCards(ele)}
+            >
+              {ele}
+            </div>
+          );
+        })}
+      </div>
+      <div className="hidden lg:block lg:h-[200px]"></div>
 
-        {/* tab section */}
-
-        <div className='w-[50%] h-12 mt-5  mx-auto flex flex-row rounded-full bg-richblack-800 border-richblack-100  '>
-            {
-                tabName.map((element,index)=>{
-                    return(
-                        <div 
-                        className={`text-[16px] flex flex-row items-center justify-center mx-auto gap-3 
-                            ${currentTab === element ? "bg-richblue-900 text-richblack-5 font-medium" :"text-richblack-200"}
-                            rounded-full transition-all duration-200 cursor-pointer hover:bg-richblack-900 hover:text-richblack-5 px-3 py-7 `}
-                         key={index} 
-                         onClick={()=> setMyCards(element)}>
-                                {element}
-                        </div>
-                    )
-                })
-            }
-        </div>
-
-        <div className='lg:h-[150px]'></div>
-
-        {/* course 3- card div   */}
-
-        <div className='absolute flex flex-row gap-10 justify-between w-full '>
-            {
-                
-                course.map((element, index)=>{
-                    return(
-                        <CourseCard
-                        key={index}
-                        cardData={element}
-                        currentCard={currentCard}
-                        setCurrentCard={setCurrentCard}
-
-                    />    
-                    )
-                })
-            }
-        </div>
-
+      {/* Cards Group */}
+      <div className="flex -mt-40 lg:absolute gap-10 justify-center
+      lg:gap-0  lg:justify-between flex-wrap w-full
+       text-black lg:mb-0 mb-7 lg:px-0 px-3 ">
+        {courses.map((ele, index) => {
+          return (
+            <CourseCard
+              key={index}
+              cardData={ele}
+              currentCard={currentCard}
+              setCurrentCard={setCurrentCard}
+            />
+          );
+        })}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default ExploreMore
+export default ExploreMore;
