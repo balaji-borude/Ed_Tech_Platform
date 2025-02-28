@@ -5,7 +5,7 @@ export const NavbarLinks = [
   },
   {
     title: "Catalog",
-    // path: '/catalog',
+    //path: '/catalog', // catlog sathi DB call krt ahe 
   },
   {
     title: "About Us",

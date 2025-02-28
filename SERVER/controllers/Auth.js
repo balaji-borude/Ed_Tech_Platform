@@ -376,7 +376,7 @@ exports.changePassword = async (req,res)=>{
 
     } catch (error) {
         // If there's an error updating the password, log the error and return a 500 (Internal Server Error) error
-        console.log("error occuring while Updaating password "),
+        console.log("error occuring while Updaating password ");
         res.status(500).json({
             success:false,
             message:"Something went Wrong while Changing Password "

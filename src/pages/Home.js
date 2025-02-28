@@ -11,7 +11,7 @@ import LearningLanguageSection from "../components/core/HomePage/LearningLanguag
 import TimeLineSection from "../components/core/HomePage/TimeLineSection"
 import InstructorSection from '../components/core/HomePage/InstructorSection';
 import ExploreMore from '../components/core/HomePage/ExploreMore';
-import Footer from '../components/UI/Footer'
+import Footer from '../components/common/Footer'
 
 
 
@@ -19,11 +19,11 @@ const Home = () => {
   return (
     <div >
       {/*Section1  */}
-      <div className='relative mx-auto flex flex-col w-11/12 max-w-maxContent items-center 
+      <div className='relative mx-auto  mt-16  flex flex-col w-11/12 max-w-maxContent items-center 
       text-white justify-between'>
 
         <Link to={"/signup"}>
-            <div className=' group mt-16 p-1 mx-auto rounded-full bg-richblack-800 font-bold text-richblack-200
+            <div className=' group p-1 mx-auto rounded-full bg-richblack-800 font-bold text-richblack-200
             transition-all duration-200 hover:scale-95 w-fit'>
                 {/* This is a button  */}
                 <div className='flex flex-row items-center gap-2 rounded-full px-10 py-[5px]
@@ -56,7 +56,7 @@ const Home = () => {
         </div>
 
         {/* Video  */}
-        <div className='mx-3 my-12 shadow-blue-200 shadow-2xl w-[800px] relative '>
+        <div className='mx-3 my-12 shadow-blue-200 shadow-2xl w-[800px] relative'>
             {/* <div className='absolute w-full bg-white'>
 
             </div> */}
@@ -66,7 +66,7 @@ const Home = () => {
                 autoPlay
             
             >
-            <source  src={Banner} type="video/mp4" />
+             <source  src={Banner} type="video/mp4" />
             </video>
         </div>
 
@@ -172,17 +172,17 @@ const Home = () => {
       
         
       {/*Section 2  */}
-      <div className='bg-pure-greys-5 text-richblack-700'>
-        <div style={{ backgroundImage: `url(${bgImage})`, height:'150px' }}  className="bgImage h-[310px] " >
+      <div className='bg-pure-greys-5 text-richblack-700 mt-20'>
+        <div style={{ backgroundImage: `url(${bgImage})`, height:'200px' }}  className="bgImage h-[310px] " >
          {/* style={{ backgroundImage: `url(${bgImage})` }}  className="bgImage h-[310px] " */}
 
             <div className='w-11/12 max-w-maxContent h-[150px] flex felx-col items-center justify-center gap-5 mx-auto'>
             {/* <div className='h-[150px]'></div> */}
-                <div className='flex flex-row gap-7 text-white  '>
+                <div className='flex flex-row gap-7 text-white mt-16  '>
 
                     <CTAButton active={true} linkto={"/signup"}>
                         <div className='flex items-center gap-4'>
-                            Explore Full catlog
+                            Explore Full Catlog
                             <FaArrowRight/>
                         </div>
                        
@@ -234,7 +234,7 @@ const Home = () => {
 
       <InstructorSection/>
 
-      <h2 className='text-center text-4xl font-semibold mt-10 '> 
+      <h2 className='text-center text-white text-4xl font-semibold mt-10 '> 
          Review from Other learner
       </h2>
 
