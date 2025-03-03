@@ -5,6 +5,9 @@ import Navbar from './components/common/Navbar';
 import OpenRoute from './components/core/Auth/OpenRoute'
 import Signup from './pages/Signup';
 import Login from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword';
+import UpdatePassword from './pages/UpdatePassword';
+import VerifyEmail from './pages/VerifyEmail';
 
 const App = () => {
   return (
@@ -20,7 +23,9 @@ const App = () => {
             </OpenRoute>
           }
         />
-    <Route
+
+        {/* openroute ==> je pn NOn logged in user ahe na te ya path la acces karu shaktat fakt  */}
+       <Route
           path="login"
           element={
             <OpenRoute>
@@ -28,7 +33,34 @@ const App = () => {
             </OpenRoute>
           }
         />
+       
+        <Route
+          path="forgot-password"
+          element={
+            <OpenRoute>
+              <ForgotPassword />
+            </OpenRoute>
+          }
+        />
+        <Route
+          path="update-password/:id"
+          element={
+            <OpenRoute>
+              <UpdatePassword/>
+            </OpenRoute>
+          }
+        />
+        <Route
+          path="/verify-email"
+          element={
+            <OpenRoute>
+              <VerifyEmail/>
+            </OpenRoute>
+          }
+        />
+        
       </Routes>
+
     </div>
   )
 }

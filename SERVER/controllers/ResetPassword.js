@@ -56,63 +56,65 @@ exports.resetPasswordToken = async (req,res) => {
 };
 
 // reset password
-exports.resetPassword = async(req,res)=>{
+exports.resetPassword = async (req, res) => {
     try {
-        // data fetch 
-        const{password,confirmPassword,token } = req.body;
+        // Fetch data from request body
+        const { password, confirmPassword, token } = req.body;
 
-        //validation
-        if(password !== confirmPassword){
-            return res.json({
-                success:false,
-                message:"Password is not matching"
-            })
+        // Validation: Check if passwords match
+        if (password !== confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Passwords do not match",
+            });
         }
 
-        // get user detail from DB using Token 
-        const userDetails=await User.findOne({token:token});
+        // Get user details from DB using Token
+        const userDetails = await User.findOne({ token });
 
-        //if no entry --> invalid Token
-        if(!userDetails){
-            return res.json({
-                success:false,
-                message:"Token is Invalid "
-            })
-        };
-
-        //Token time check --> token is expires or not 
-        if(userDetails.resetPasswordExpires > Date.now()){
-            return res.json({
-                success:false,
-                message:"Token is expired , Regenerete Your Token "
+        // If user not found → Invalid token
+        if (!userDetails) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid or expired token",
             });
-        };
+        }
 
-        //hash password
-        let encryptedPassword = await bcrypt.hash(password,10);
+        // Check if token is expired 
+        // userDetails.resetPasswordExpires yacha time -- kami pahije -- preset time pekksha tevahch ---> token expire nahi ahe ase samjel 
+        if (userDetails.resetPasswordExpires < Date.now()) { 
+            return res.status(400).json({
+                success: false,
+                message: "Token has expired. Please generate a new reset link.",
+            });
+        }
 
-        // password la update kele 
+        // Hash new password
+        const encryptedPassword = await bcrypt.hash(password, 10);
+
+        // Update user password & remove token fields
         await User.findOneAndUpdate(
-            {token:token},
-            {password:encryptedPassword},
-            {new:true}
+            { token },
+            {
+                password: encryptedPassword,
+                token: null, // Remove token so it can't be reused
+                resetPasswordExpires: null, // Clear expiry field
+            },
+            { new: true }
         );
 
-        //return response
+        // Return response
         return res.status(200).json({
-            success:true,
-            message:"password Reset Succesfully"
-        })
-
+            success: true,
+            message: "Password reset successfully. You can now log in.",
+        });
 
     } catch (error) {
-        console.log("error in Reset- password",error); 
-        
-    return res.status(500).json({
-        success:false,
-        message:"something went Wrong While reset password "
-    })
-    
+        console.error("Error resetting password:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong while resetting the password.",
+        });
     }
 };
 

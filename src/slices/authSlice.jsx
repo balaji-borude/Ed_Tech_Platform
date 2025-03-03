@@ -1,10 +1,11 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-    // jr token bhetle tr parse kr nahitr null set kr --> there is use of ternary operator 
-
+    
     signupData: null,
     loading: false,
+    
+    // jr token bhetle tr parse kr nahitr null set kr --> there is use of ternary operator 
     token: localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
 };
 

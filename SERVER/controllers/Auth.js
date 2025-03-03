@@ -76,7 +76,7 @@ exports.signUp= async(req,res)=>{
 			// Invalid OTP
 			return res.status(400).json({
 				success: false,
-				message: "The OTP is not valid  res",
+				message: "The OTP is not valid  ",
 			});
 		}
 
@@ -166,16 +166,17 @@ exports.login= async(req,res)=>{
         if(await bcrypt.compare(password, user.password)){
             // jr password match zale tr TOKEN create karayche
              // create Jwt Token 
-            payload={
+           const payload={
                 id:user._id,
                 email:user.email,
                 accountType:user.accountType
-                //password:user.password --> do not send password in token   
             };
+            //password:user.password --> do not send password in token   
+
             // jwt secret call kela
-            let JWT_SCERET = process.env.JWT_SCERET;
+            const JWT_SCERET = process.env.JWT_SCERET;
             // option madhe Expirey set karaychi 
-            options={
+           const options={
                 expiresIn:"24h"
             };
 
@@ -193,7 +194,7 @@ exports.login= async(req,res)=>{
 
             // Set cookie for token and return success response
             // generate cookie
-            cookie_options = {
+           const cookie_options = {
              expires:  new Date(Date.now()+ 3*24*60*60*1000), // cookie Expires in 3 day --> 3*24*60*60*1000
              httpOnly:true  // Prevents JavaScript from accessing the cookie (enhances security).
             };
