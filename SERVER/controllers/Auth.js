@@ -21,10 +21,10 @@ exports.signUp= async(req,res)=>{
             confirmPassword,
             accountType, 
             contactNumber,
-            otp} = req.body;
+            } = req.body;
 
         // validation of above password 
-        if(!firstName || !lastName || !email || !password || !confirmPassword || !otp){
+        if(!firstName || !lastName || !email || !password || !confirmPassword  || !accountType){
             return res.status(403).json({
                 success:false,
                 message:"All Field are Required"
@@ -50,35 +50,37 @@ exports.signUp= async(req,res)=>{
         };
 
         // find most resent OTP stored in user --> means DB  
-        const response = await OTP.find({ email }).sort({ createdAt: -1 });  // findOne()--> method gives an error
+        //const response = await OTP.find({ email }).sort({ createdAt: -1 });  // findOne()--> method gives an error
+        // const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
 
-        if (!response) {
-            return res.status(400).json({
-                success: false,
-                message: "No OTP found for this email"
-            });
-        }
+
+        // if (!response) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "No OTP found for this email"
+        //     });
+        // }
         // .sort({createdAt : -1}).limit(1);
         //1.Finds the first document where the email field matches the given value.
         //2. sort({createdAt : -1}) -->  Sorts the results in descending order (newest first) based on the createdAt field.
         //3. .limit(1)--> Ensures that only one document (the most recent one) is returned.
 
-        console.log("recent OTP in DB _----> ", response);
+        //console.log("recent OTP in DB _----> ", response);
 
         // validate Otp 
-        if (response.length === 0) {
-			// OTP not found for the email
-			return res.status(400).json({
-				success: false,
-				message: "The OTP is not valid fOr Length",
-			});
-		} else if (otp !== response[0].otp) {
-			// Invalid OTP
-			return res.status(400).json({
-				success: false,
-				message: "The OTP is not valid  ",
-			});
-		}
+        // if (response.length === 0) {
+		// 	// OTP not found for the email
+		// 	return res.status(400).json({
+		// 		success: false,
+		// 		message: "The OTP is not valid fOr Length",
+		// 	});
+		// } else if (otp !== response[0].otp) {
+		// 	// Invalid OTP
+		// 	return res.status(400).json({
+		// 		success: false,
+		// 		message: "The OTP is not valid  ",
+		// 	});
+		// }
 
         // Hash the Password 
         let hasshedPassword = await bcrypt.hash(password,10);

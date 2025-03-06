@@ -24,8 +24,10 @@ const Navbar = () => {
   const fetchSubLinks = async () => {
     try {
       const result = await apiConnector("GET", categories.CATEGORIES_API);
-      console.log("printing Sublinks -->", result)
-      setSubLinks(result.data.data);
+      console.log("printing Sublinks -->", result.data.showAllCategory);
+
+      setSubLinks(result.data.showAllCategory);
+
     } catch (error) {
       console.log("Could not fetch category details", error);
     }
@@ -90,7 +92,8 @@ const Navbar = () => {
                                 (
                                   subLinks.map((sublink, index) => (
                                     <Link to={`${sublink.link}`} key={index}>
-                                      {sublink.title} 
+                                      {sublink.title} ;
+                                     
                                     </Link>
                                   ))
                                 ) :

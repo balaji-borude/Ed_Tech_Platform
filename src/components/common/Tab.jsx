@@ -1,4 +1,6 @@
-export default function Tab({ tabData, field, setField }) {
+
+// SignUp form madhe tab componets create kela ahe tyache logic yeththe lihayche ahe --tab switching che 
+export default function Tab({ tabData, accountType, setAccountType }) {
     return (
       <div
         style={{
@@ -9,14 +11,14 @@ export default function Tab({ tabData, field, setField }) {
         {tabData.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setField(tab.type)}
+            onClick={() => setAccountType(tab.type)}
             className={`${
-              field === tab.type
+              accountType === tab.type
                 ? "bg-richblack-900 text-richblack-5"
                 : "bg-transparent text-richblack-200"
             } py-2 px-5 rounded-full transition-all duration-200`}
           >
-            {tab?.tabName}
+            {tab.tabName}
           </button>
         ))}
       </div>

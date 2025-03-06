@@ -40,13 +40,13 @@ const VerifyEmail = () => {
          } = signupData
 
        // dispatch(signUp(accountType,firstName,lastName,email,password,confirmPassword,otp,navigate))
-        dispatch(signUp(accountType, firstName, lastName, email, password, confirmPassword, otp))
-        .then(() => {
-            navigate("/login");  // ✅ Navigate only after success
-        })
-        .catch(() => {
-            navigate("/signup");  // ✅ If signup fails, redirect to signup
-        });
+        dispatch(signUp(accountType, firstName, lastName, email, password, confirmPassword, otp,navigate))
+        // .then(() => {
+        //     navigate("/login");  // ✅ Navigate only after success
+        // })
+        // .catch(() => {
+        //     navigate("/signup");  // ✅ If signup fails, redirect to signup
+        // });
 
 
     };

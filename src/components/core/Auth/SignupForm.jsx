@@ -14,7 +14,7 @@ function SignupForm() {
   const dispatch = useDispatch()
 
   // student or instructor
-  const [accountType, setAccountType] = useState(ACCOUNT_TYPE.STUDENT)
+  const [accountType, setAccountType] = useState(ACCOUNT_TYPE.STUDENT);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -22,12 +22,13 @@ function SignupForm() {
     email: "",
     password: "",
     confirmPassword: "",
-  })
+  });
+
 
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const { firstName, lastName, email, password, confirmPassword } = formData
+  const { firstName, lastName, email, password, confirmPassword } = formData;
 
   // Handle input fields, when some value changes
   const handleOnChange = (e) => {
@@ -83,11 +84,14 @@ function SignupForm() {
 
   return (
     <div>
-      {/* Tab */}
-      <Tab tabData={tabData} field={accountType} setField={setAccountType} />
+      {/* Tab components call here --> passing Props to Tab componetns */}
+      <Tab tabData={tabData} accountType={accountType} setAccountType={setAccountType} />
+
+
       {/* Form */}
       <form onSubmit={handleOnSubmit} className="flex w-full flex-col gap-y-4">
         <div className="flex gap-x-4">
+          {/* firstName field */}
           <label>
             <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
               First Name <sup className="text-pink-200">*</sup>
@@ -105,6 +109,7 @@ function SignupForm() {
               className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
             />
           </label>
+          {/* LastName */}
           <label>
             <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
               Last Name <sup className="text-pink-200">*</sup>
@@ -123,6 +128,7 @@ function SignupForm() {
             />
           </label>
         </div>
+        {/* email address */}
         <label className="w-full">
           <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
             Email Address <sup className="text-pink-200">*</sup>
@@ -140,6 +146,7 @@ function SignupForm() {
             className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
           />
         </label>
+        {/* password are here  */}
         <div className="flex gap-x-4">
           <label className="relative">
             <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
@@ -196,6 +203,7 @@ function SignupForm() {
             </span>
           </label>
         </div>
+
         <button
           type="submit"
           className="mt-6 rounded-[8px] bg-yellow-50 py-[8px] px-[12px] font-medium text-richblack-900"
