@@ -9,13 +9,21 @@ import ForgotPassword from './pages/ForgotPassword';
 import UpdatePassword from './pages/UpdatePassword';
 import VerifyEmail from './pages/VerifyEmail';
 import About from './pages/About';
+import Dashboard from './pages/Dashboard';
+import MyProfile from './components/core/Dashboard/MyProfile';
+import PrivateRoute from './components/core/Auth/PrivateRoute';
+import Error from './pages/Error';
+
 
 const App = () => {
   return (
     <div className='w-screen min-h-screen bg-richblack-900 flex flex-col font-inter'>
       <Navbar/>
+
       <Routes>
+
         <Route path="/" element={<Home/>}/>
+        
         <Route
           path="signup"
           element={
@@ -59,6 +67,9 @@ const App = () => {
             </OpenRoute>
           }
         />
+          
+          <Route path='/about' element={<About/>} />
+          
         <Route
           path="/about"
           element={
@@ -67,6 +78,36 @@ const App = () => {
             </OpenRoute>
           }
         />
+
+          {/* contact form page  */}
+        {/* <Route path='/contact' element={<Contact/>} /> */}
+
+        {/* after login wala route */}
+        {/* <Route
+          path="/dasboard/my-profile"
+          element={
+            <OpenRoute>
+              <Dashboard/>
+            </OpenRoute>
+          }
+        /> */}
+        <Route
+          element={
+            <PrivateRoute>
+              <Dashboard/>
+            </PrivateRoute>
+          }
+
+        >
+         <Route path='dasboard/my-profile' element={<MyProfile/>}/>
+
+        </Route>
+
+
+
+
+         {/* if Page is not found */}
+        <Route path='*' element={<Error/>} />
         
       </Routes>
 

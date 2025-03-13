@@ -95,7 +95,6 @@ export function signUp(
   }
 }
 
-
 //Login function 
 export function login(email, password, navigate) {
 
@@ -126,7 +125,11 @@ export function login(email, password, navigate) {
 
       dispatch(setUser({ ...response.data.user, image: userImage }));
 
-      localStorage.setItem("token", JSON.stringify(response.data.token))
+      localStorage.setItem("token", JSON.stringify(response.data.token));
+
+      // user la pn local storage madhe add kele karan --> UI wr Login and signup button disat navhte --> session storage.clear kelyavr disata hote --> mhanje user la local storage madhe add kelel navhte 
+      
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       navigate("/dashboard/my-profile");
 
 
@@ -138,7 +141,6 @@ export function login(email, password, navigate) {
     toast.dismiss(toastId)
   }
 }
-
 
 // get reset password Token
 export function getPasswordResetToken(email, setEmailSent) {

@@ -162,7 +162,9 @@ const Navbar = () => {
                </button>
               </Link>
             )
-          }
+          } 
+
+          {/* if token is not null means token has a value then show  ProfileDropDown page  */}
          
          {
           token !==null &&(
