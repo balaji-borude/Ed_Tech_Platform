@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link, matchPath } from 'react-router-dom'
 import logo from '../../assets/Logo/Logo-Full-Light.png';
 import { NavbarLinks } from '../../data/navbar-links';
@@ -11,6 +11,8 @@ import {apiConnector} from '../../services/apiconnector'
 import {categories} from '../../services/apis'
 
 import { MdOutlineArrowDropDownCircle } from "react-icons/md";
+
+
 const Navbar = () => {
 
   const {token} = useSelector((state)=>state.auth);
@@ -19,14 +21,29 @@ const Navbar = () => {
 
 
   // links 
-  const [subLinks,setSubLinks] = useState([]);
+  //const [subLinks,setSubLinks] = useState([]);
+
+  // here we Hardcoded the data we need to --> replace with api response data
+  const subLinks = [
+    {
+        title: "python",
+        link:"/catalog/python"
+    },
+    {
+        title: "web dev",
+        link:"/catalog/web-development"
+    },
+  ];
 
   const fetchSubLinks = async () => {
     try {
+      // api calling 
       const result = await apiConnector("GET", categories.CATEGORIES_API);
-      console.log("printing Sublinks -->", result.data.showAllCategory);
 
-      setSubLinks(result.data.showAllCategory);
+      // console.log("printing result of links",result)
+      console.log("printing Sublinks data -->", result.data.showAllCategory);
+
+      //setSubLinks(result.data.showAllCategory);
 
     } catch (error) {
       console.log("Could not fetch category details", error);
@@ -36,6 +53,10 @@ const Navbar = () => {
   useEffect(() => {
     fetchSubLinks();
   }, []);
+
+
+
+
 
  //matchPath() is a function (likely from React Router v6).
  //It checks if the location.pathname matches the provided route.
@@ -66,62 +87,57 @@ const Navbar = () => {
 
           <ul className='flex  gap-x-5'>
             {
-              NavbarLinks.map((link,index)=>{
-                return(
-                  <li key={index}>
-                    {/* catlog navigation la wegle create karayche and bki 3 la wegle create karayche --> tyasathi hi khalchi Ternarny operatr use kela ahe   */}
-                    {
-                      link.title === "catalog" ?
+            NavbarLinks.map( (link, index) => (
 
-                      (
-                       <div className='flex items-center gap-2 group relative '>
-                          <p> 
-                            {link.title}  
-                          </p>
+              <li key={index}>
+                 {
+                     link.title === "Catalog" ? (
+                         <div className='relative flex items-center gap-2 group'>
 
-                          <MdOutlineArrowDropDownCircle />
-                          {/*  group-hOver : visibble --> parent wr hover kelyave visible zale pahije div  */}
-                          <div className='invisible absolute left-[50%] top-[50%]
-                          translate-x-[-50%] translate-y-[80%]
-                          flex flex-col rounded-md bg-richblack-5 p-4 text-richblack-900 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100  lg:[300px] '>
+                             <p>{link.title} </p>
 
-                            <div className='absolute left-[50%] top-14  h-6 w-6 translate-y-[45%] translate-x-[80%] rounded bg-richblack-5 '>
+                             <MdOutlineArrowDropDownCircle/>
 
-                              {
-                                subLinks.length ? 
-                                (
-                                  subLinks.map((sublink, index) => (
-                                    <Link to={`${sublink.link}`} key={index}>
-                                      {sublink.title} ;
-                                     
-                                    </Link>
-                                  ))
-                                ) :
-                                (<div></div>)
-                              }
+                             <div className='invisible absolute left-[50%]
+                                 translate-x-[-50%] translate-y-[80%]
+                              top-[50%]
+                             flex flex-col rounded-md bg-richblack-5 p-4 text-richblack-900
+                             opacity-0 transition-all duration-200 group-hover:visible
+                             group-hover:opacity-100 lg:w-[300px] -mt-11 z-10'>
+
+                                {/* This is a div of small square */}
+                                 <div className='absolute left-[50%] top-0
+                                 translate-x-[80%]
+                                 translate-y-[-45%] h-6 w-6 rotate-45 rounded bg-richblack-5'>
+                                 </div>
+
+                                 {
+                                     subLinks.length ? (
+                                             subLinks.map( (subLink, index) => (
+                                                 <Link to={`${subLink.link}`} key={index}>
+                                                     <p>{subLink.title}</p>
+                                                 </Link>
+                                             ) )
+                                     ) : (<div></div>)
+                                 }
+
+                             </div>
 
 
+                         </div>
 
-                            </div>
-                          </div>
-                       </div>
-                      ) 
-                       
-                       : (
-                        // ?. --> yane kay hote 
-                        <Link to={link?.path}>
-                          <p className={`${matchRoute(link?.path) ? "  text-yellow-25" : "text-richblack-25 flex "}  `}>
-
-                            {link.title}
-
-                          </p>
-                        </Link>
-                      )
-                    }
-                 </li>
-                )
-                
-              })
+                     ) : (
+                      // this section for other navlinks exccept => Catlog link
+                         <Link to={link?.path}>
+                             <p className={`${ matchRoute(link?.path) ? "text-yellow-25" : "text-richblack-25"}`}>
+                                 {link.title}
+                             </p>
+                             
+                         </Link>
+                     )
+                 }
+             </li>
+          ) )
             }
           </ul>
 
@@ -132,6 +148,7 @@ const Navbar = () => {
           {
             user && user?.accountType !== "Instructor" && (
               // classname la relative mark kele --> karan cart wr jo number yet nahi ka tyla crt chya warti thevnysathi 
+
               <Link to="/dashboard/cart" className='relative'>
                 <AiOutlineShoppingCart />
                 {

@@ -27,6 +27,10 @@ const Dashboard = () => {
         <div className='h-[calc(100vh-3.5rem)] overflow-auto'>
             <div className='mx-auto w-11/12 max-w-[1000px] py-10 '>
 
+            {/* ✔ Outlet is used in parent routes to render child components dynamically.
+                ✔ It keeps the parent layout while swapping child routes inside it.
+                ✔ It makes routing modular and structured for dashboard-like layouts. */}
+                
                 <Outlet/>
             </div>
 

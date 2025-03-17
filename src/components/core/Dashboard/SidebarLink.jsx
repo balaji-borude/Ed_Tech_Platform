@@ -4,9 +4,12 @@ import { useDispatch } from 'react-redux';
 import { matchPath, useLocation } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
-const SiderbarLink = ({link,iconName}) => {
 
-    const Icon =  Icons[iconName];
+const SidebarLink = ({link,iconName}) => {
+
+   // const Icon =  Icons[iconName];
+   const Icon =  Icons.VscAccount;
+
     const location = useLocation();// sidebar che icon and text la yellow color madhe thevayche ahe == user jya path wr mhanje sidebarcya page wr  ahe tyacha color aplyala yelllow karaycha ahe 
 
     const dispatch = useDispatch();
@@ -20,6 +23,7 @@ const SiderbarLink = ({link,iconName}) => {
     // function madhe same name function call kele ki recursion houn --> function function la call kart rahto tyamul --> code burst hotot 
 
   return (
+
     <div>
         <NavLink 
          to={link.path}
@@ -47,4 +51,4 @@ const SiderbarLink = ({link,iconName}) => {
   )
 }
 
-export default SiderbarLink
+export default SidebarLink;

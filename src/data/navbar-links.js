@@ -1,3 +1,4 @@
+  
 export const NavbarLinks = [
   {
     title: "Home",
@@ -5,7 +6,7 @@ export const NavbarLinks = [
   },
   {
     title: "Catalog",
-   //  path: '/catalog', // catlog sathi DB call krt ahe 
+   // path: '/catalog', // catlog sathi DB call krt ahe 
   },
   {
     title: "About Us",

@@ -99,9 +99,13 @@ export function signUp(
 export function login(email, password, navigate) {
 
   return async (dispatch) => {
-    const toastId = toast.loading("Loading...")
+
+    const toastId = toast.loading("Loading...");
+
     dispatch(setLoading(true));   // loading la true kel ahe 
-     console.log("entering in login function frontend ..")
+
+     console.log("entering in login function frontend ..");
+
     try {
       const response = await apiConnector("POST", LOGIN_API, {
         email,
@@ -127,6 +131,7 @@ export function login(email, password, navigate) {
 
       localStorage.setItem("token", JSON.stringify(response.data.token));
 
+      // one Error found :-->
       // user la pn local storage madhe add kele karan --> UI wr Login and signup button disat navhte --> session storage.clear kelyavr disata hote --> mhanje user la local storage madhe add kelel navhte 
       
       localStorage.setItem("user", JSON.stringify(response.data.user));

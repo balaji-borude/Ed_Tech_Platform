@@ -2,8 +2,10 @@ import React from 'react'
 import IconBtn from './IconBtn'
 
 const ConfirmatiomModal = ({modalData}) => {
+    
   return (
-    // logout kelyave confimation pop
+    // logout kelyavr confimation pop up show hoil tyasati 
+    
     <div>
         <div>
             <p>
@@ -11,19 +13,25 @@ const ConfirmatiomModal = ({modalData}) => {
                    modalData.text1 
                 }
             </p>
+
             <p>
                 {modalData.text2}
             </p>
 
-            {/* button */}
 
+            {/* button */}
             <div>
                 <IconBtn
-                    onCllick={modalData?.btn1Hnadler}
+                    onClick={modalData?.btn1Handler}
                     text={modalData?.btn1Text}
                 />
+                
+                {/* <button onClick={modalData?.btn1Handler}>
+                 {modalData?.btn1Text}
+                </button> */}
 
-                <button onClick=  {modalData?.btn2Handler}>
+
+                <button onClick={modalData?.btn2Handler}>
                     {modalData.btn2Text}
                 </button>
             </div>

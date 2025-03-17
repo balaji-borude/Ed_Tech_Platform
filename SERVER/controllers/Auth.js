@@ -101,6 +101,10 @@ exports.signUp= async(req,res)=>{
             contactNumber:null
         });
 
+        // in Db profile detail is not showing whyy ??????????????????????????????????????????
+        console.log("Profile details", profileDetails);
+
+
         const user = await User.create({
             firstName,
             lastName,
@@ -109,7 +113,7 @@ exports.signUp= async(req,res)=>{
             password:hasshedPassword,
             accountType,
             approved:approved,
-            additionalDetail:profileDetails._id,  
+            additionalDetails:profileDetails._id,  
            // additionalDetail :profileDetails._id, // yamdhe je profile detail ahe na tyachi id pass keli je profile Detail page 
            image:`https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${ lastName}`,
         });

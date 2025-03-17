@@ -2,28 +2,28 @@ import React from 'react'
 
 const IconBtn = ({
     text,
-    onCllick,
+    onClick,  // ✅ Corrected from "onCllick"
     children,
     disabled,
     outline = false,
     customClasses,
     type
-}) => {
-  return (
-    <div>
-        {
-            children ? (
-               <>
-                    <span>
-                         {text}
-                    </span>
-                    {children}
-               </>
 
-            ):(text)
-        }
-    </div>
-  )
+
+}) => {
+  
+    return (
+        <button onClick={onClick}>
+            {children ? (
+                <>
+                    <span>{text}</span>
+                    {children}
+                </>
+            ) : (
+                text
+            )}
+        </button>
+    )
 }
 
-export default IconBtn
+export default IconBtn;
