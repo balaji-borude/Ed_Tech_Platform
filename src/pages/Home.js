@@ -241,8 +241,7 @@ const Home = () => {
 
       </div>
 
-      {/*Footer */}
-          {/* hw   */}
+      {/*Footer Section  */}
 
           <Footer/>
 
