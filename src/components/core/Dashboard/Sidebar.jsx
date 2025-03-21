@@ -58,8 +58,8 @@ const Sidebar = () => {
         <div className='flex flex-col'>
 
             <SidebarLink
-             link={{name:"settings",path:"dashboard/settings"}}
-             iconName="vscSettingGear"
+             link={{name:"settings",path:"/dashboard/settings"}}
+             iconName="VscSettingsGear"
              
             />
 
@@ -71,7 +71,8 @@ const Sidebar = () => {
                  btn1Handler:()=> dispatch(logout(navigate)),
                  btn2Handler:()=>setConfirmationModal(null)
             })}
-            className='text-sm font-medium text-richblack-300'
+            // change kele yethe 
+            className='px-8 py-2 text-sm font-medium text-richblack-300'
             >
                 <div className='flex items-center gap-x-2'>
                     <VscSignOut className='text-lg'/>
@@ -90,3 +91,4 @@ const Sidebar = () => {
 }
 
 export default Sidebar
+

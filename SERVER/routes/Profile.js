@@ -15,7 +15,7 @@ const {
 //                                      Profile routes
 // ********************************************************************************************************
 // Delet User Account
-router.delete("/deleteProfile", deleteAccount)
+router.delete("/deleteProfile",auth, deleteAccount)  // we have to pass Authetication middleware to delete the accout Because we are get user.id from token ==> i missed to pass the auth meddleware to deleteaccount path 
 router.put("/updateProfile", auth, updateProfile)
 router.get("/getUserDetails", auth, getAllUserDetails)
 

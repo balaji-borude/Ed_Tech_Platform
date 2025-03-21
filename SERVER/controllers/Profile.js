@@ -26,7 +26,7 @@ exports.updateProfile = async(req,res) =>{
        const userDetail = await User.findById(id);
        console.log("Userdetail find keli -->", userDetail)
 
-        const profileId = userDetail.additionalDetail; // profile chi Id find keli ahe 
+        const profileId = userDetail.additionalDetails; // profile chi Id find keli ahe 
         console.log("user madun Profile chi Id kadli -->",profileId);
 
         const profileDetails = await Profile.findById(profileId);
@@ -62,8 +62,13 @@ exports.updateProfile = async(req,res) =>{
 // delete account handler 
 exports.deleteAccount = async(req,res)=>{
     try { 
+      console.log("enterring in delete account");
+      console.log("req.user:", req.user);
+
         // account delete sati acc chi  id lagel --> ti Id find keli ahe 
-        const id = req.user.id;
+        const { id } = req.user;  // ✅ Ensure `id` is extracted
+        console.log("Getting User ID in backend:", id);
+       // console.log("getting User id backend",email)
 
         //validation --> (id check sathi Db call karaycha ki user present ahe ka nahi and Db madhe )
         const user = await User.findById({_id:id});
@@ -81,26 +86,29 @@ exports.deleteAccount = async(req,res)=>{
    //............... what is -->  CRON job   ---> find / search ................................................
 
         // use madhe profile pn asel tyla delete kr 
-        await Profile.findByIdAndDelete({_id:user.additionalDetail});
+        await Profile.findByIdAndDelete({_id:user.additionalDetails});
 
         // YETHE kontya variable madhe store kela nahi ki konta data delete hote he jevhaa use karayche tevha aplyala kahi garaj naste ki konta data delete hotoy 
         // 1. Use await Profile.findByIdAndDelete(...) (without storing) when you just need to delete the record.
         // 2.  Use const deleteAcc = await Profile.findByIdAndDelete(...) if you need to verify if deletion was successful or log the deleted document.
 
         // delete user 
-        await User.findByIdAndDelete({_id:id});
+        //await User.findByIdAndDelete({_id:id});
+        await User.findByIdAndDelete(id); // ✅ Corrected
 
      
         // send success response 
         return res.status(200).json({
-            success:false,
+            success:true,
          message:"user deleted succesfully"
-        })
+        });
+
+
     } catch (error) {
         console.log(error);
-		res.status(500).json({ 
+	    	res.status(500).json({ 
             success: false, 
-            message: "User Cannot be deleted successfully" });
+            message: "Error occured !! User Cannot be deleted " });
     }
 };
 
@@ -116,7 +124,7 @@ exports.getAllUserDetails = async(req,res)=>{
 
         // validation and get user detail 
         const userDetails = await User.findById(id);
-        await userDetails.populate('additionalDetails').execPopulate();
+        await userDetails.populate('additionalDetails');   //.execPopulate(); this is Depriciated mongoose 6+
     
         console.log("userDeils printing-->", userDetails);
 
@@ -139,7 +147,7 @@ exports.getAllUserDetails = async(req,res)=>{
         return res.status(500).json({
             success:false,
             message:error.message,
-            message:"something went wrong while fetching All user data "
+            //message:"something went wrong while fetching All user data "
         })
     }
 };

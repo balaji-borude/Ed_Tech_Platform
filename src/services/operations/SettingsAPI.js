@@ -70,10 +70,13 @@ export function updateProfile(token, formData) {
   }
 }
 
+// function for changing passwoord 
 export async function changePassword(token, formData) {
-  const toastId = toast.loading("Loading...")
+
+  const toastId = toast.loading("Loading...");
+  
   try {
-    const response = await apiConnector("POST", CHANGE_PASSWORD_API, formData, {
+    const response = await apiConnector("PUT", CHANGE_PASSWORD_API, formData, {
       Authorization: `Bearer ${token}`,
     })
     console.log("CHANGE_PASSWORD_API API RESPONSE............", response)
@@ -89,20 +92,33 @@ export async function changePassword(token, formData) {
   toast.dismiss(toastId)
 }
 
+// delete User 
 export function deleteProfile(token, navigate) {
+
   return async (dispatch) => {
+
     const toastId = toast.loading("Loading...")
+
     try {
+
       const response = await apiConnector("DELETE", DELETE_PROFILE_API, null, {
         Authorization: `Bearer ${token}`,
+
       })
+      console.log()
       console.log("DELETE_PROFILE_API API RESPONSE............", response)
 
       if (!response.data.success) {
         throw new Error(response.data.message)
       }
+ 
       toast.success("Profile Deleted Successfully")
-      dispatch(logout(navigate))
+  
+     // toast.success("Profile Deleted Successfully")
+     setTimeout(() => {
+       dispatch(logout(navigate));
+     }, 2000);
+
     } catch (error) {
       console.log("DELETE_PROFILE_API API ERROR............", error)
       toast.error("Could Not Delete Profile")

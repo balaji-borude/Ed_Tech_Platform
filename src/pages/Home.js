@@ -37,7 +37,9 @@ const Home = () => {
 
         <div className='text-center text-4xl font-semibold mt-7'>
             Empower Your Future with
-            <HighlightText text={"Coding Skills"} />
+            <HighlightText text={"Coding Skills"}
+               className="text-4xl font-bold bg-gradient-to-tr from-[#1FA2FF] via-[#12D8FA] to-[#A6FFCB] bg-clip-text text-transparent"
+            />
         </div>
 
         <div className=' mt-4 w-[90%] text-center text-lg font-bold text-richblack-300'>
@@ -64,7 +66,6 @@ const Home = () => {
                 muted
                 loop
                 autoPlay
-            
             >
              <source  src={Banner} type="video/mp4" />
             </video>
