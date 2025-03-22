@@ -3,7 +3,7 @@ const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 require("dotenv").config();
 
-//update profile picture
+//update profile 
 exports.updateProfile = async(req,res) =>{
     try {
        // data fetch from body  --> data nahi takla tr default empty send kela 
@@ -24,11 +24,12 @@ exports.updateProfile = async(req,res) =>{
        /* User madhe Additionall detail navachi field add keleli ahe tila -->  Profile  ase nav dile , aplyala User model madhun Tya Profile(additionaldetails) field(model) chi Id find karaychi ani tya Id wr aplya req.body madhun ghetlela data update karaycha ahe */  
 
        const userDetail = await User.findById(id);
-       console.log("Userdetail find keli -->", userDetail)
+       console.log("User detail find keli -->", userDetail)
 
         const profileId = userDetail.additionalDetails; // profile chi Id find keli ahe 
         console.log("user madun Profile chi Id kadli -->",profileId);
 
+        //  find the Profile 
         const profileDetails = await Profile.findById(profileId);
 
        //update profile
@@ -48,7 +49,8 @@ exports.updateProfile = async(req,res) =>{
        return res.status(200).json({
         success:true,
         message:"Profile Updated SuccessFully",
-        profileDetails
+        profileDetails,
+          
        })
         
     } catch (error) {

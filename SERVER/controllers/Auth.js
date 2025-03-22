@@ -14,17 +14,19 @@ require("dotenv").config();
 exports.signUp= async(req,res)=>{
     try {
         // Destructure fields from the request body    
-        const {firstName,
-            lastName,
-            email,
-            password,
-            confirmPassword,
-            accountType, 
-            contactNumber,
-            } = req.body;
+		const {
+			firstName,
+			lastName,
+			email,
+			password,
+			confirmPassword,
+			accountType,
+			contactNumber,
+			otp,
+		} = req.body;
 
         // validation of above password 
-        if(!firstName || !lastName || !email || !password || !confirmPassword  || !accountType){
+        if(!firstName || !lastName || !email || !password || !confirmPassword  || !accountType || !otp){
             return res.status(403).json({
                 success:false,
                 message:"All Field are Required"
@@ -35,7 +37,7 @@ exports.signUp= async(req,res)=>{
         if(password !== confirmPassword){
            return res.status(400).json({
                 success:false,
-                message:"Password and ConfirmPassword Field does not matched "
+                message:"Password and ConfirmPassword Field do not matched> Please try again "
             });
         };
 
@@ -50,40 +52,62 @@ exports.signUp= async(req,res)=>{
         };
 
         // find most resent OTP stored in user --> means DB  
+
         //const response = await OTP.find({ email }).sort({ createdAt: -1 });  // findOne()--> method gives an error
-        // const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
+        const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
 
 
-        // if (!response) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "No OTP found for this email"
-        //     });
-        // }
+        if (!response) {
+            return res.status(400).json({
+                success: false,
+                message: "No OTP found for this email"
+            });
+        }
         // .sort({createdAt : -1}).limit(1);
-        //1.Finds the first document where the email field matches the given value.
-        //2. sort({createdAt : -1}) -->  Sorts the results in descending order (newest first) based on the createdAt field.
-        //3. .limit(1)--> Ensures that only one document (the most recent one) is returned.
+        // 1.Finds the first document where the email field matches the given value.
+        // 2. sort({createdAt : -1}) -->  Sorts the results in descending order (newest first) based on the createdAt field.
+        // 3. .limit(1)--> Ensures that only one document (the most recent one) is returned.
 
-        //console.log("recent OTP in DB _----> ", response);
+        console.log("recent OTP in DB _----> ", response);
 
-        // validate Otp 
-        // if (response.length === 0) {
+            //validate Otp 
+        if (response.length === 0) {
+			// OTP not found for the email
+			return res.status(400).json({
+				success: false,
+				message: "The OTP is not valid fOr Length",
+			});
+		} else if (otp !== response[0].otp) {
+			// Invalid OTP
+			return res.status(400).json({
+				success: false,
+				message: "The OTP is not valid  ",
+			});
+		};
+
+        //Find the most recent OTP for the email
+
+        // const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
+		// console.log(response);
+
+		// if (response.length === 0) {
 		// 	// OTP not found for the email
 		// 	return res.status(400).json({
 		// 		success: false,
-		// 		message: "The OTP is not valid fOr Length",
+		// 		message: "The OTP is not valid",
 		// 	});
+
 		// } else if (otp !== response[0].otp) {
 		// 	// Invalid OTP
 		// 	return res.status(400).json({
 		// 		success: false,
-		// 		message: "The OTP is not valid  ",
+		// 		message: "The OTP is not valid",
 		// 	});
-		// }
+		// };
 
         // Hash the Password 
         let hasshedPassword = await bcrypt.hash(password,10);
+
         console.log("Password is hashed now ",hasshedPassword);
 
         // Create the User 
@@ -101,9 +125,8 @@ exports.signUp= async(req,res)=>{
             contactNumber:null
         });
 
-        // in Db profile detail is not showing whyy ??????????????????????????????????????????
+        // in Db profile detail is not showing whyy ?????????????????????????????????????????? --> Because of 
         console.log("Profile details", profileDetails);
-
 
         const user = await User.create({
             firstName,
@@ -115,7 +138,7 @@ exports.signUp= async(req,res)=>{
             approved:approved,
             additionalDetails:profileDetails._id,  
            // additionalDetail :profileDetails._id, // yamdhe je profile detail ahe na tyachi id pass keli je profile Detail page 
-           image:`https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${ lastName}`,
+           image:`https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
         });
 
         console.log("This Entry is Stored in DataBase",user);
@@ -264,10 +287,11 @@ exports.sendOTP = async(req,res)=>{
       //This is not a good ,  Best logic --> insted of it used library which generate a unique OTP --> this is a BrutForce
       
       while(result){
+
         otp = otpGenerator.generate(6,{
             upperCaseAlphabets:false,
-          });
-          result = await OTP.findOne({otp:otp});
+        });
+        result = await OTP.findOne({otp:otp});
       };
 
       // OTP ki Entry DB madhe save karaychi 
@@ -281,7 +305,8 @@ exports.sendOTP = async(req,res)=>{
         success:true,
         message:"OTP send Succesfully",
         otp:otpBody.otp
-      })
+      });
+      
 
    } catch (error) {
         console.log(error);

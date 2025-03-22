@@ -38,15 +38,20 @@ export default function ChangeProfilePicture() {
   }
 
   const handleFileUpload = () => {
+    console.log("clicking to upload file")
     try {
       console.log("uploading...")
       setLoading(true)
       const formData = new FormData()
       formData.append("displayPicture", imageFile)
-      // console.log("formdata", formData)
+
+      console.log("formdata", formData)  // debugging krt ahe 
+
       dispatch(updateDisplayPicture(token, formData)).then(() => {
         setLoading(false)
-      })
+      });
+
+
     } catch (error) {
       console.log("ERROR MESSAGE - ", error.message)
     }
@@ -57,15 +62,20 @@ export default function ChangeProfilePicture() {
       previewFile(imageFile)
     }
   }, [imageFile])
+
   return (
     <>
       <div className="flex items-center justify-between rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12 text-richblack-5">
+
         <div className="flex items-center gap-x-4">
+          {/* left img decction  */}
           <img
             src={previewSource || user?.image}
             alt={`profile-${user?.firstName}`}
             className="aspect-square w-[78px] rounded-full object-cover"
           />
+          
+          {/* main right section  */}
           <div className="space-y-2">
             <p>Change Profile Picture</p>
             <div className="flex flex-row gap-3">
@@ -83,14 +93,21 @@ export default function ChangeProfilePicture() {
               >
                 Select
               </button>
+
               <IconBtn
                 text={loading ? "Uploading..." : "Upload"}
-                onclick={handleFileUpload}
+                onClick={handleFileUpload}
               >
                 {!loading && (
                   <FiUpload className="text-lg text-richblack-900" />
                 )}
-              </IconBtn>
+              </IconBtn> 
+
+              {/* <button text={loading ? "Uploading..." : "Upload"}
+                onclick={handleFileUpload}>
+                  
+              </button> */} 
+
             </div>
           </div>
         </div>

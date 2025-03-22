@@ -3,13 +3,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import OtpInput from 'react-otp-input';
 import { useNavigate } from 'react-router-dom';
 import { sendOtp, signUp } from '../services/operations/authAPI';
+
 import { Link } from 'react-router-dom';
 
+import { BiArrowBack } from "react-icons/bi";
+import { RxCountdownTimer } from "react-icons/rx";
 // signup function la import kele 
 
 
 const VerifyEmail = () => {
     const [otp , setOtp] = useState("");
+
     const dispatch = useDispatch();
     const {signupData,loading} = useSelector((state)=>state.auth);
 
@@ -27,20 +31,23 @@ const VerifyEmail = () => {
     },)
     
     const handleOnsubmit=(e)=>{
+         console.log("verify is data is present in signupData", signupData);
+
          e.preventDefault();
 
+         // crerting object is it okk check ????
          const {
-            accountType,
-            firstName,
-            lastName,
-            email,
-            password,
-            confirmPassword,
-            otp
-         } = signupData
+                accountType,
+                firstName,
+                lastName,
+                email,
+                password,
+                confirmPassword
+            } = signupData
 
-       // dispatch(signUp(accountType,firstName,lastName,email,password,confirmPassword,otp,navigate))
-        dispatch(signUp(accountType, firstName, lastName, email, password, confirmPassword, otp,navigate))
+        // call the funciton of signup form 
+        dispatch(signUp(accountType, firstName, lastName, email, password, confirmPassword, otp,navigate));
+
         // .then(() => {
         //     navigate("/login");  // ✅ Navigate only after success
         // })
@@ -51,53 +58,80 @@ const VerifyEmail = () => {
 
     };
 
+
+    // H.W ==>> Resent OTP and otp is not matching problem solve karne ahe 
+
   return (
-    <div className='text-white'>
-        {
-            loading? (
-                <div>
-                    loading.....
-                </div>
-            ) 
-            :(
-                <div>
-                    <h1> Verify Email </h1>
-                    <p> A verification code has been send to you . enter the code Below</p>
+    <div className="min-h-[calc(100vh-3.5rem)] grid place-items-center">
 
-                    <form onSubmit={handleOnsubmit}> 
-                        <OtpInput
-                            value={otp}
-                            onChange={setOtp}
-                            numInputs={6}
-                            renderSeparator={<span>-</span>}
-                            renderInput={(props) => <input {...props} className='bg-richblack-400 text-yellow-100' />}
-                        />
+      {loading ? (
+        <div>
+          <div className="spinner"></div>
+        </div>
 
-                        <button type='submit'>
-                            Verify Email 
-                        </button>
+      ) : (
+        <div className="max-w-[500px] p-4 lg:p-8">
 
-                       
-                    </form>
+          <h1 className="text-richblack-5 font-semibold text-[1.875rem] leading-[2.375rem]">
+            Verify Email
+          </h1>
 
-                    <div>
-                         {/* back to login button */}
-                        <div>
-                            {/* arrow button  */}
+          <p className="text-[1.125rem] leading-[1.625rem] my-4 text-richblack-100">
+            A verification code has been sent to you. Enter the code below
+          </p>
+          
+          <form onSubmit={handleOnsubmit}>
+            <OtpInput
+              value={otp}
+              onChange={setOtp}
+              numInputs={6}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  placeholder="-"
+                  style={{
+                    boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                  }}
+                  className="w-[48px] lg:w-[60px] border-0 bg-richblack-800 rounded-[0.5rem] text-richblack-5 aspect-square text-center focus:border-0 focus:outline-2 focus:outline-yellow-50"
+                />
+              )}
 
-                            <Link to="/login">
-                             <p> back to Login </p>
-                            </Link>
+              containerStyle={{
+                justifyContent: "space-between",
+                gap: "0 6px",
+              }}
+            />
 
-                        </div>
-                        <button onClick={()=> dispatch(sendOtp(signupData.email))}>
-                            Resend it
-                        </button>
-                    </div>
-                </div>
-            )
-        }
+            <button
+              type="submit"
+              className="w-full bg-yellow-50 py-[12px] px-[12px] rounded-[8px] mt-6 font-medium text-richblack-900"
+            >
+              Verify Email
+            </button>
+
+          </form>
+
+          {/* Buttons  */}
+          <div className="mt-6 flex items-center justify-between">
+            <Link to="/signup">
+              <p className="text-richblack-5 flex items-center gap-x-2">
+                <BiArrowBack /> Back To Signup
+              </p>
+            </Link>
+
+            <button
+              className="flex items-center text-blue-100 gap-x-2"
+              // navigate to the verifyOTP Page 
+              onClick={() => dispatch(sendOtp(signupData.email,navigate))}
+            >
+              <RxCountdownTimer />
+              Resend it
+            </button>
+          </div>
+        </div>
+      )}
     </div>
+
   )
 }
 

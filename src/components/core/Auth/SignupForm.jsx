@@ -9,7 +9,9 @@ import { setSignupData } from "../../../slices/authSlice"
 import { ACCOUNT_TYPE } from "../../../utils/constants"
 import Tab from "../../common/Tab"
 
+
 function SignupForm() {
+
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -36,24 +38,27 @@ function SignupForm() {
       ...prevData,
       [e.target.name]: e.target.value,
     }))
-  }
+  };
 
   // Handle Form Submission
   const handleOnSubmit = (e) => {
-    e.preventDefault()
-
+  
+    e.preventDefault(); 
     if (password !== confirmPassword) {
       toast.error("Passwords Do Not Match")
       return
-    }
+    };
+
+    // create an Oblect where all form data and Account Type is collected Together 
     const signupData = {
       ...formData,
-      accountType,
-    }
+      accountType, // Tab component kadun ghetle account type ghetle 
+    };
 
     // Setting signup data to state
     // To be used after otp verification
-    dispatch(setSignupData(signupData))
+    dispatch(setSignupData(signupData));
+
     // Send OTP to user for verification
     dispatch(sendOtp(formData.email, navigate))
 
@@ -66,7 +71,7 @@ function SignupForm() {
       confirmPassword: "",
     })
     setAccountType(ACCOUNT_TYPE.STUDENT)
-  }
+  };
 
   // data to pass to Tab component
   const tabData = [
@@ -86,7 +91,6 @@ function SignupForm() {
     <div>
       {/* Tab components call here --> passing Props to Tab componetns */}
       <Tab tabData={tabData} accountType={accountType} setAccountType={setAccountType} />
-
 
       {/* Form */}
       <form onSubmit={handleOnSubmit} className="flex w-full flex-col gap-y-4">

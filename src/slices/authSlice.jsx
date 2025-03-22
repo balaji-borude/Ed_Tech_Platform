@@ -12,13 +12,15 @@ const initialState = {
 const authSlice = createSlice({
     name:"auth",
     initialState:initialState,
+
     reducers:{
         setToken(state,value){
             state.token = value.payload;
         },
         setSignupData(state, value) {
             state.signupData = value.payload;
-          },
+            },
+
           setLoading(state, value) {
             state.loading = value.payload;
           },

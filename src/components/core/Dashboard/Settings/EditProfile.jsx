@@ -20,21 +20,25 @@ export default function EditProfile() {
   } = useForm()
 
   const submitProfileForm = async (data) => {
-    // console.log("Form Data - ", data)
+     console.log("Form Data - ", data)
     try {
       dispatch(updateProfile(token, data))
     } catch (error) {
       console.log("ERROR MESSAGE - ", error.message)
     }
-  }
+  };
+  
   return (
     <>
       <form onSubmit={handleSubmit(submitProfileForm)}>
+
         {/* Profile Information */}
         <div className="my-10 flex flex-col gap-y-6 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12">
+
           <h2 className="text-lg font-semibold text-richblack-5">
             Profile Information
           </h2>
+
           <div className="flex flex-col gap-5 lg:flex-row">
             <div className="flex flex-col gap-2 lg:w-[48%]">
               <label htmlFor="firstName" className="lable-style">
@@ -55,7 +59,11 @@ export default function EditProfile() {
                 </span>
               )}
             </div>
+
+
+            {/* LastName  */}
             <div className="flex flex-col gap-2 lg:w-[48%]">
+
               <label htmlFor="lastName" className="lable-style">
                 Last Name
               </label>
@@ -68,14 +76,17 @@ export default function EditProfile() {
                 {...register("lastName", { required: true })}
                 defaultValue={user?.lastName}
               />
+              {/* If field is empty show this msg on below of lastName fields */}
               {errors.lastName && (
                 <span className="-mt-1 text-[12px] text-yellow-100">
                   Please enter your last name.
                 </span>
               )}
+
             </div>
           </div>
 
+              {/* Date of Birth */}
           <div className="flex flex-col gap-5 lg:flex-row">
             <div className="flex flex-col gap-2 lg:w-[48%]">
               <label htmlFor="dateOfBirth" className="lable-style">
@@ -103,7 +114,10 @@ export default function EditProfile() {
                   {errors.dateOfBirth.message}
                 </span>
               )}
+
             </div>
+
+            {/*  Gender Type */}
             <div className="flex flex-col gap-2 lg:w-[48%]">
               <label htmlFor="gender" className="lable-style">
                 Gender
@@ -130,8 +144,10 @@ export default function EditProfile() {
                 </span>
               )}
             </div>
+
           </div>
 
+              {/* Contact Name  */}
           <div className="flex flex-col gap-5 lg:flex-row">
             <div className="flex flex-col gap-2 lg:w-[48%]">
               <label htmlFor="contactNumber" className="lable-style">
@@ -159,6 +175,8 @@ export default function EditProfile() {
                 </span>
               )}
             </div>
+
+            {/* About section  */}
             <div className="flex flex-col gap-2 lg:w-[48%]">
               <label htmlFor="about" className="lable-style">
                 About
@@ -180,6 +198,9 @@ export default function EditProfile() {
             </div>
           </div>
         </div>
+
+
+          {/* Button div  */}
 
         <div className="flex justify-end gap-2">
           <button
