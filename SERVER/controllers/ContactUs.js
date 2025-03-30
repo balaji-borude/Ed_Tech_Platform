@@ -19,7 +19,7 @@ exports.contactus=async(req,res)=>{
         console.log("sending mail to contactUs student")
         // send mail to studyNotion that the this student send a mail to 
 
-        const mailToStudyNotion =await mailsender(process.env.STUDYNOTION_MAIL, `${email} send email check it Out !!! `, `<p> ${message} -- <sub> send by - ${email}</sub> Solve the Query </p>`)
+        const mailToStudyNotion = await mailsender(process.env.STUDYNOTION_MAIL, `${email} send email check it Out !!! `, `<p> ${message} -- <sub> send by - ${email}</sub> Solve the Query </p>`)
 
         // send success response 
         return res.status(200).json({
@@ -30,7 +30,7 @@ exports.contactus=async(req,res)=>{
         return res.status(500).json({
             success:false,
             message:error.message,
-            message:"Something went Wrong while contacting StudyNotion ! please verify the details and try again later !!! "
+            //message:"Something went Wrong while contacting StudyNotion ! please verify the details and try again later !!! "
         })
     }
 }

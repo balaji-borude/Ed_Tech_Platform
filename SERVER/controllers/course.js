@@ -19,20 +19,28 @@ exports.createCourse = async(req,res)=>{
 			courseDescription,
 			whatYouWillLearn,
 			price,
-			tag,
+			//tag,
 			category,
 			status,
 			instructions,
 		} = req.body;
 
         // Get thumbnail image from request files
-        const thumbnail = req.files.thumbnailImage; 
+        //const thumbnail = req.files.thumbnailImage; 
 
         // validation 
-        if(!courseName|| !courseDescription || !whatYouWillLearn || !price || !tag || !category || !status || !instructions ){
+        if(!courseName|| 
+            !courseDescription ||
+             !whatYouWillLearn ||
+              !price ||
+               //!tag ||
+                !category ||
+                 !status || 
+                 !instructions ){
+
             return res.status(400).json({
                 success:false,
-                message:"All field are required"
+                message:"All field are required "
             })
         };
 
@@ -43,14 +51,16 @@ exports.createCourse = async(req,res)=>{
         // course is only created only by Instructor (instructor validation);
         //  --> intructor chi object_id pahije na course madhe mhanun -->
 
-   
+        // const instructorDetails = await User.findById(userId);
+        // if (!instructorDetails || instructorDetails.accountType !== "Instructor") {
+
+            // ################ I think there is an issue with applying the conditions  ############################################
 
         // Check if the user is an instructor
-        const instructorDetails = await User.findById(userId,
-            {
-                accountType: "Instructor",
-            }
-        );
+        const instructorDetails = await User.findById(userId, {
+            accountType: "Instructor",
+        });
+        
 
         console.log("DB madhun indtructor detail kadhla --> ", instructorDetails)
 
@@ -73,7 +83,7 @@ exports.createCourse = async(req,res)=>{
 		}
 
         // thumbanail image send to cloudinary 
-        const thumbnailImage = await uploadImageToCloudinary(thumbnail,process.env.FOLDER_NAME); 
+        //const thumbnailImage = await uploadImageToCloudinary(thumbnail,process.env.FOLDER_NAME); 
 
         // create cousrse entry in DB for new course
         const newCourse = await Course.create({
@@ -82,8 +92,9 @@ exports.createCourse = async(req,res)=>{
             instructor:instructorDetails._id, // instructor chya ID sathi wari DB call kela ahe 
             whatYouWillLearn:whatYouWillLearn,
             price,
+            //tag,
             category: categoryDetails._id,  // apan yete fakt tag hi pathvu shakto karan tyat pn id ahe Tag chi
-            thumbnail:thumbnailImage.secure_url,
+           // thumbnail:thumbnailImage.secure_url,
             status: status,
 			instructions: instructions,
         });

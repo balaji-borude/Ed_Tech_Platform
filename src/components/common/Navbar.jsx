@@ -74,7 +74,7 @@ const Navbar = () => {
 
 
   return (
-    <div className='flex h-12 items-center justify-center border-b-[1px] border-b-richblack-600'>
+    <div className='flex h-12 items-center justify-center border-b-[1px] border-b-richblack-600 p-6'>
       <div className='flex w-11/12 max-w-maxContent items-center justify-between'>
 
         {/*Logo  */}

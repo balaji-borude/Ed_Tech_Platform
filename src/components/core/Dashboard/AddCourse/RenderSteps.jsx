@@ -1,6 +1,6 @@
 
 import { useSelector } from 'react-redux';
-import CourseInformation from './CourseFormation/CourseInformation';
+import CourseInformationForm from './CourseFormation/CourseInformationForm';
 import { FaCheck } from "react-icons/fa";
 
 
@@ -31,27 +31,28 @@ const RenderSteps = () => {
     <>
         <div>
             {
-                steps.map((items)=>(
-                    <>
-                    <div>
+                steps.map((items,index)=>(
+
+                    <div key={index}>
+
+                     <div key={items.id}>
                         {/* step --> hi course Slice maddhu;n ghetli ahe  */}
                         <div className={`${step === items.id 
                                  ? "bg-yellow-900 border-yellow-50 text-yellow-50" 
                                 : "border-richblack-100 bg-richblack-800 text-richblack-800"}`}
                             >
+                                {/* This logic for after completing first step first step show check icon on it  */}
                             {
                                 step > items.id ? (<FaCheck />) :(items.id)
                             }
 
                             </div>
                         </div>
-
+                            {/* PENDING WORK IS HERE  */}
                             {/* aadd  code for dashes between the labels   */}
-                        {
-                            items.id !== steps.length  
-                        }
+                     
 
-                    </>
+                    </div>
                 ))
             }
         </div>
@@ -72,7 +73,7 @@ const RenderSteps = () => {
 
         {/* step chya - Id nusar components Render krt ahe broo   */}
         {
-            step === 1 && <CourseInformation/>
+            step === 1 && <CourseInformationForm/>
         }
 
         {/* {
