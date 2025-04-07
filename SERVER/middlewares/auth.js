@@ -28,10 +28,15 @@ exports.auth = async (req, res, next) => {
 
         try{
             const decode =  jwt.verify(token, JWT_SCERET);
-
-            console.log()
             console.log(decode);
-            req.user = decode;    // user chya requestmadhe Token pathavle 
+            req.user = decode;    
+            // user chya request madhe Token pathavle ====> mahnje pratyek user chya request madhe he token janar --> tyacha fayda as honar ki -->
+            // const payload={
+            //     id:user._id,
+            //     email:user.email,
+            //     accountType:user.accountType
+            // };
+            // ------------> ha jo data user ne payload madhe store kela ahe na to apan acces karu shakkto 
         }
         catch(err) {
             //verification - issue
@@ -104,7 +109,8 @@ exports.isInstructor = async(req,res,next)=>{
                 message:"This is a Protected Route for Instructor"
             })
         }
-        console.log("existing in Is Instructor section ")
+        console.log("existing in Is Instructor section ");
+        
         next();  // go to next middleware
 
     } catch (error) {

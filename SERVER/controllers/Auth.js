@@ -212,7 +212,7 @@ exports.login= async(req,res)=>{
             // create token 
             const token =  jwt.sign(payload,JWT_SCERET,options);
             console.log("After LOgin Token is created---> ", token )
-
+            
             // token la user madhe INSERT kele 
             // save token to user document in database
             //*******************impp********************************** */

@@ -22,7 +22,7 @@ export default function MyProfile() {
           <img
             src={user?.image}
             alt={`profile-${user?.firstName}`}
-            className="aspect-square w-[78px] rounded-full object-cover"
+            className="aspect-square w-[78px] rounded-full object-contain"
           />
 
           <div className="space-y-1">

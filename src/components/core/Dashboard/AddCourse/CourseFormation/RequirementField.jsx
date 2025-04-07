@@ -62,7 +62,7 @@ const RequirementField = ({name,register,label, errors,setValue,getValues}) => {
             </button>
         </div>
 
-        {/* display requirement and remove require ment sati  */}
+        {/* display requirement and remove requirement sati  */}
 
         {
           requirementList.length > 0 && (
@@ -97,3 +97,4 @@ const RequirementField = ({name,register,label, errors,setValue,getValues}) => {
 }
 
 export default RequirementField
+
