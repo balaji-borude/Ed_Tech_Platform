@@ -170,8 +170,8 @@ export function getPasswordResetToken(email, setEmailSent) {
       //   throw new Error(response.data.message)
       // }
 
-      toast.success("Reset Email Sent")
       setEmailSent(true);
+      toast.success("Password Reset Email Sent")
 
 
     } catch (error) {
