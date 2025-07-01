@@ -1,7 +1,3 @@
-............................IMP.....................
-TO clear cache press --> ctrl + shift + R 
-
-
 
 # React & Tailwind CSS Starter Pack
 
